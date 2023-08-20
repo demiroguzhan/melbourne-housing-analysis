@@ -572,3 +572,12 @@ summary(housing_dataset)
 
 Everything looks good. Then we can begin to dealing with our missing data.
 
+
+
+
+
+
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+knitr::purl(input = "melbourne-housing.Rmd", output = "melbourne-housing-no-doc.R",documentation = 0)
+```

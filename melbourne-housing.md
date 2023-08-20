@@ -1063,3 +1063,6 @@ summary(housing_dataset)
     ##  10412  :  425  
     ##  14949  :  410  
     ##  (Other):26978
+
+Everything looks good. Then we can begin to dealing with our missing
+data.
