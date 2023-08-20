@@ -1,7 +1,5 @@
 ---
 title: "Melbourne Housing"
-author: "Oguzhan Demir"
-date: "19/08/2023"
 output: 
   github_document:
     toc: true
@@ -10,28 +8,33 @@ output:
 
 # Importing Dataset / Pre-analysis
 
-We are importing our data set to studio and we save a backup version to save original data on studio. I decided to use strings as non-factor objects because i will set all the variables by myself after doing some analysis on data. Since we have some cells with “#N/A” text in it, R doesn’t see them as NA values. To avoid them, we are using na.strings parameter to import them as NA’s.
+We are importing our data set to studio and we save a backup version to save original data on studio.
+I decided to use strings as non-factor objects because i will set all the variables by myself after doing some analysis on data.
+Since we have some cells with “#N/A” text in it, R doesn't see them as NA values.
+To avoid them, we are using na.strings parameter to import them as NA's.
 
 ```{r}
 housing_dataset <- read.csv("melbourne_data.csv",
                             stringsAsFactors = FALSE, na.strings = "#N/A")
-backup <- housing_dataset
 ```
 
-Before doing any cleaning and altering, we are checking structure and summary of the data to have some understanding about our data that we will analyze.
+Before doing any cleaning and altering, we are checking structure and summary of the data to have some understanding about
+ our data that we will analyze.
 
 
 ```{r}
 str(housing_dataset)
 ```
 
-When we check the structure of our data set, we can see there is a column named X which is not necessary since we already have built in numbering system in R. We have lots of columns which has “chr” type which looks incorrect. Since they are character, it won’t be healthy to check summary of the dataset now. So we will work with our column types now.
+When we check the structure of our data set, we can see there is a column named X which is not necessary since we already have
+built in numbering system in R. We have lots of columns which has “chr” type which looks incorrect.
+Since they are character, it won't be healthy to check summary of the dataset now. So we will work with our column types now.
 
 # Preparing Columns for Analysis
 
 ## X Column
 
-As we mentioned above we won’t use column X. According to that, we are removing that column from our dataset for further analysis.
+As we mentioned above we won't use column X. According to that, we are removing that column from our dataset for further analysis.
 
 ```{r}
 housing_dataset$X <- NULL
@@ -39,7 +42,8 @@ housing_dataset$X <- NULL
 
 ## Date Column
 
-We are formatting the “Date” column to Date object, looking into the new structure and summary to check everything is working as what we wanted. Fortunately, we had no NA values in “Date” column.
+We are formatting the “Date” column to Date object, looking into the new structure and summary to check everything is working
+as what we wanted. Fortunately, we had no NA values in “Date” column.
 
 ```{r}
 housing_dataset$Date <- as.Date(housing_dataset$Date, format = "%d/%m/%Y")
@@ -47,15 +51,15 @@ housing_dataset$Date <- as.Date(housing_dataset$Date, format = "%d/%m/%Y")
 
 ```{r}
 str(housing_dataset$Date)
-```
-
-```{r}
 summary(housing_dataset$Date)
 ```
 
 ## Type Column
 
-We are renaming strings for better explanation and factorizing those values. Then, checking levels of created factor to be sure everything is alright. Looking into the new structure and summary to check everything looks like as what we wanted. We had no NA values in “Type” column too.
+We are renaming strings for better explanation and factorizing those values.
+Then, checking levels of created factor to be sure everything is alright.
+Looking into the new structure and summary to check everything looks like as what we wanted.
+We had no NA values in “Type” column too.
 
 ```{r}
 housing_dataset$Type[housing_dataset$Type == "h"] <- "House"
@@ -66,19 +70,15 @@ housing_dataset$Type <- factor(housing_dataset$Type)
 
 ```{r}
 levels(factor(housing_dataset$Type))
-```
-
-```{r}
 str(housing_dataset$Type)
-```
-
-```{r}
 summary(housing_dataset$Type)
 ```
 
 ## Price Column
 
-We are formatting “Price” column to integer since we don’t have any double values in Price column. Then, we are checking the structure, summary and NA values in the “Price” column. We have 7610 missing values on “Price” column.
+We are formatting “Price” column to integer since we don't have any double values in Price column.
+Then, we are checking the structure, summary and NA values in the “Price” column.
+We have 7610 missing values on “Price” column.
 
 ```{r, warning=FALSE}
 housing_dataset$Price <- as.integer(housing_dataset$Price)
@@ -86,15 +86,15 @@ housing_dataset$Price <- as.integer(housing_dataset$Price)
 
 ```{r}
 str(housing_dataset$Price)
-```
-
-```{r}
 summary(housing_dataset$Price)
 ```
 
 ## Landsize and BuildingArea Columns
 
-We are formatting “Landsize” and “BuildingArea” columns to integer since we don’t have any double values in them and they are sharing the same structures. Then, we are checking the structure, summary and NA values in those columns. We have 11810 missing values on “Landsize” and 21115 missing values on “BuildingArea” column according to summary of the column.
+We are formatting “Landsize” and “BuildingArea” columns to integer since we don't have any double values in them
+and they are sharing the same structures.
+Then, we are checking the structure, summary and NA values in those columns.
+We have 11810 missing values on “Landsize” and 21115 missing values on “BuildingArea” column according to summary of the column.
 
 ```{r, warning=FALSE}
 housing_dataset$Landsize <- as.integer(housing_dataset$Landsize)
@@ -103,23 +103,20 @@ housing_dataset$BuildingArea <- as.integer(housing_dataset$BuildingArea)
 
 ```{r}
 str(housing_dataset$Landsize)
-```
-
-```{r}
 summary(housing_dataset$Landsize)
 ```
 
 ```{r}
 str(housing_dataset$BuildingArea)
-```
-
-```{r}
 summary(housing_dataset$BuildingArea)
 ```
 
+
 ## Rooms, Bathroom, Car Columns
 
-We will apply the same approach to “Rooms”, “Bathroom” and “Car” columns since they are identical in terms of data. First of all, we will format them to integer and then we will check their structures and summaries one by one. Fortunately, we have no NA values in “Rooms” column but we have 8226 missing values in “Bathroom” and 8728 missing values in “Car” column.
+We will apply the same approach to “Rooms”, “Bathroom” and “Car” columns since they are identical in terms of data.
+First of all, we will format them to integer and then we will check their structures and summaries one by one.
+Fortunately, we have no NA values in “Rooms” column but we have 8226 missing values in “Bathroom” and 8728 missing values in “Car” column.
 
 ```{r, warning=FALSE}
 housing_dataset$Rooms <- as.integer(housing_dataset$Rooms)
@@ -129,43 +126,38 @@ housing_dataset$Car <- as.integer(housing_dataset$Car)
 
 ```{r}
 str(housing_dataset$Rooms)
-```
-
-```{r}
 summary(housing_dataset$Rooms)
 ```
 
 ```{r}
 str(housing_dataset$Bathroom)
-```
-
-```{r}
 summary(housing_dataset$Bathroom)
 ```
 
 ```{r}
 str(housing_dataset$Car)
-```
-
-```{r}
 summary(housing_dataset$Car)
 ```
 
 ## YearBuilt Column
-We will format “YearBuilt” column to integer. It will help us while dealing with outliers in the column. Since we don’t have any month and day information in this column, date type won’t fit to it. After formatting, we are checking the structure and summary of this column. We have 19306 missing values in this column.
+We will format “YearBuilt” column to integer.
+It will help us while dealing with outliers in the column. 
+Since we don't have any month and day information in this column, date type won't fit to it.
+After formatting, we are checking the structure and summary of this column.
+We have 19306 missing values in this column.
 
 ```{r, warning=FALSE}
 housing_dataset$YearBuilt <- as.integer(housing_dataset$YearBuilt)
 ```
 ```{r}
 str(housing_dataset$YearBuilt)
-```
-```{r}
 summary(housing_dataset$YearBuilt)
 ```
 
 ## Distance Column
-We are formatting “Distance” column to numeric since we have digits in those columns. Then we are checking structure and summary as always. We have just 1 cell missing in “Distance” column.
+We are formatting “Distance” column to numeric since we have digits in those columns.
+Then we are checking structure and summary as always.
+We have just 1 cell missing in “Distance” column.
 
 ```{r, warning=FALSE}
 housing_dataset$Distance <- as.numeric(housing_dataset$Distance)
@@ -173,13 +165,13 @@ housing_dataset$Distance <- as.numeric(housing_dataset$Distance)
 
 ```{r}
 str(housing_dataset$Distance)
-```
-```{r}
 summary(housing_dataset$Distance)
 ```
 
 ## Regionname Column
-We are factorizing the “Regionname” column and checking its levels. Then, we look into structure and summary of it to be sure everything is correct. We have 3 cells missing in “Regionname” column.
+We are factorizing the “Regionname” column and checking its levels.
+Then, we look into structure and summary of it to be sure everything is correct.
+We have 3 cells missing in “Regionname” column.
 
 ```{r, warning=FALSE}
 housing_dataset$Regionname <- factor(housing_dataset$Regionname)
@@ -187,17 +179,16 @@ housing_dataset$Regionname <- factor(housing_dataset$Regionname)
 
 ```{r}
 levels(factor(housing_dataset$Regionname))
-```
-```{r}
 str(housing_dataset$Regionname)
-```
-```{r}
 summary(housing_dataset$Regionname)
 ```
 
 ## PropertyCount Column
-We will factorize the “PropertyCount” column because those values actually are not different from each other. There are several property areas in different regions which has exactly the same amount of properties. So, they show us “which” property area that property belongs to. According to that, we will use that variable as factor, instead of integer. Then we are checking its structure and summary. We have 3 missing rows in
-“PropertyCount” column, same as “Regionname”
+We will factorize the “PropertyCount” column because those values actually are not different from each other.
+There are several property areas in different regions which has exactly the same amount of properties.
+So, they show us “which” property area that property belongs to.
+According to that, we will use that variable as factor, instead of integer. Then we are checking its structure and summary.
+We have 3 missing rows in “PropertyCount” column, same as “Regionname”
 
 ```{r, warning=FALSE}
 housing_dataset$Propertycount <- factor(housing_dataset$Propertycount)
@@ -211,7 +202,144 @@ levels(factor(housing_dataset$Propertycount))
 
 ```{r}
 str(housing_dataset$Propertycount)
-```
-```{r}
 summary(housing_dataset$Propertycount)
+```
+
+# Dealing With Missing Values
+
+First, let's have a look the data we have obtained during the pre-process.
+Date Column: 0 missing rows
+Type Column: 0 missing rows
+Price Column: 7610 missing rows
+Landsize Column: 11810 missing rows
+BuildingArea Column: 21115 missing rows
+Rooms Column: 0 missing rows
+Bathroom Column: 8226 missing rows
+Car Column: 8728 missing rows 
+earBuilt Column: 19306 missing rows
+Distance Column: 1 missing rows
+Regionname Column: 3 missing rows
+Propertycount Column: 3 missing rows
+
+When we look at the table above, we can see that the Distance, Regionname and Propertycount columns have very little missing data.
+Starting from this data will be the easiest step at this point.
+
+```{r}
+housing_dataset[is.na(housing_dataset$Distance), ]
+housing_dataset[is.na(housing_dataset$Regionname), ]
+housing_dataset[is.na(housing_dataset$Propertycount), ]
+```
+
+It seems that these 3 columns are missing 3 rows in common.
+We have the “Distance” data in the 2 missing rows, and as we know, the “Distance”, “Regionname”, and “Propertycount” columns
+are there to provide the same information: the area where the property is located.
+With that in mind, we can use this “Distance” data to predict other columns.
+
+First, let's take a look at the regions where the “Distance” data is 5.1.
+
+```{r}
+summary(housing_dataset$Regionname[housing_dataset$Distance == 5.1])
+```
+
+When we perform some mathematical operations on the above data, we obtain the Regionname value of the first row can be
+Western Metropolitan with a probability of 69.1%, or Southern Metropolitan with a probability of 30.9%.
+Accordingly, instead of deleting this data, we can add it to the analysis by restoring it.
+
+```{r}
+housing_dataset[18524, "Regionname"] <- "Western Metropolitan"
+```
+
+Now let's do the same steps for second line.
+
+```{r}
+summary(housing_dataset$Regionname[housing_dataset$Distance == 7.7])
+```
+
+When we do the same operations for the second line, we get the Southern Metropolitan value with a probability of 91.9%
+and a Western Metropolitan value with a probability of 8.1%.
+Based on this information, we can assume the Regionname of second line to be Southern Metropolitan and include it in the analysis.
+
+```{r}
+housing_dataset[26889, "Regionname"] <- "Southern Metropolitan"
+```
+
+We can do a similar approach for the “Propertycount” column.
+If we examine the property area where the properties are located in that region and include the house prices in this examination,
+we can find where these properties belong.
+
+```{r}
+summary(housing_dataset$Propertycount[housing_dataset$Distance == 5.1 & housing_dataset$Regionname == "Western Metropolitan"])
+```
+
+When we look at the table above, we can say that this property is more likely to be located in the area with 7570 properties.
+However, it is also useful to compare the price.
+
+```{r}
+housing_dataset[18524, "Price"]
+```
+
+```{r}
+summary(housing_dataset$Price[housing_dataset$Distance == 5.1 & housing_dataset$Regionname == "Western Metropolitan" & housing_dataset$Propertycount == 7570])
+```
+
+```{r}
+summary(housing_dataset$Price[housing_dataset$Distance == 5.1 & housing_dataset$Regionname == "Western Metropolitan" & housing_dataset$Propertycount == 2417])
+```
+
+The value of this property is defined as 710.000 units.
+When we look at the mean and median price values in two different fields, the arrows again shows the field with 7570 properties.
+With this information, we edit the Propertycount of this property as 7570 and include it in our analysis.
+
+```{r}
+housing_dataset[18524, "Propertycount"] <- 7570
+```
+
+Now let's do the same approach for the second row.
+
+```{r}
+summary(housing_dataset$Propertycount[housing_dataset$Distance == 7.7 & housing_dataset$Regionname == "Southern Metropolitan"])
+```
+
+It is very difficult to make a prediction based on the above table. 
+There are almost equal number of properties in 2 different regions.
+Therefore, we will make a prediction based on the price values.
+
+```{r}
+housing_dataset[26889, "Price"]
+```
+
+```{r}
+summary(housing_dataset$Price[housing_dataset$Distance == 7.7 & housing_dataset$Regionname == "Southern Metropolitan" & housing_dataset$Propertycount == 8920])
+```
+
+```{r}
+summary(housing_dataset$Price[housing_dataset$Distance == 7.7 & housing_dataset$Regionname == "Southern Metropolitan" & housing_dataset$Propertycount == 8989])
+```
+
+The value of our second property is defined as 825.000 units.
+When we look at the mean and median values in two different area, we can easily say that this property belongs to the second area.
+Therefore, we change the “Propertycount” data of this property to 8989.
+
+```{r}
+housing_dataset[26889, "Propertycount"] <- 8989
+```
+
+We recovered two of the 3 missing rows. Let's take a look at the third one.
+
+```{r}
+housing_dataset[29484, ]
+```
+
+Unfortunately there is nothing we can do for this row.
+While we only have the number of rooms and the price, there is no way we can recover such missing data.
+Therefore, we will not include this row in our analysis.
+
+```{r}
+housing_dataset <- housing_dataset[-c(29484), ]
+```
+
+Before concluding this section, let's take a final look at a summary of our data.
+
+```{r}
+summary(housing_dataset)
 ```

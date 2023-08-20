@@ -1,7 +1,5 @@
 Melbourne Housing
 ================
-Oguzhan Demir
-19/08/2023
 
 - [1 Importing Dataset /
   Pre-analysis](#1-importing-dataset--pre-analysis)
@@ -17,6 +15,7 @@ Oguzhan Demir
   - [2.8 Distance Column](#28-distance-column)
   - [2.9 Regionname Column](#29-regionname-column)
   - [2.10 PropertyCount Column](#210-propertycount-column)
+- [3 Dealing With Missing Values](#3-dealing-with-missing-values)
 
 # 1 Importing Dataset / Pre-analysis
 
@@ -30,7 +29,6 @@ parameter to import them as NA’s.
 ``` r
 housing_dataset <- read.csv("melbourne_data.csv",
                             stringsAsFactors = FALSE, na.strings = "#N/A")
-backup <- housing_dataset
 ```
 
 Before doing any cleaning and altering, we are checking structure and
@@ -388,3 +386,308 @@ summary(housing_dataset$Propertycount)
     ##     146     145     144     142     140     137     137     136     135     134 
     ##    3692   11925    4898    4380    3280   15542    2555    4553 (Other)    NA's 
     ##     134     134     133     132     131     129     126     124    9871       3
+
+# 3 Dealing With Missing Values
+
+First, let’s have a look the data we have obtained during the
+pre-process. Date Column: 0 missing rows Type Column: 0 missing rows
+Price Column: 7610 missing rows Landsize Column: 11810 missing rows
+BuildingArea Column: 21115 missing rows Rooms Column: 0 missing rows
+Bathroom Column: 8226 missing rows Car Column: 8728 missing rows
+earBuilt Column: 19306 missing rows Distance Column: 1 missing rows
+Regionname Column: 3 missing rows Propertycount Column: 3 missing rows
+
+When we look at the table above, we can see that the Distance,
+Regionname and Propertycount columns have very little missing data.
+Starting from this data will be the easiest step at this point.
+
+``` r
+housing_dataset[is.na(housing_dataset$Distance), ]
+```
+
+    ##             Date  Type  Price Landsize BuildingArea Rooms Bathroom Car
+    ## 29484 2018-01-06 House 616000       NA           NA     3       NA  NA
+    ##       YearBuilt Distance Regionname Propertycount
+    ## 29484        NA       NA       <NA>          <NA>
+
+``` r
+housing_dataset[is.na(housing_dataset$Regionname), ]
+```
+
+    ##             Date        Type  Price Landsize BuildingArea Rooms Bathroom Car
+    ## 18524 2017-07-15 Unit/Duplex 710000       NA           NA     2       NA  NA
+    ## 26889 2017-11-11       House 825000       NA           NA     2       NA  NA
+    ## 29484 2018-01-06       House 616000       NA           NA     3       NA  NA
+    ##       YearBuilt Distance Regionname Propertycount
+    ## 18524        NA      5.1       <NA>          <NA>
+    ## 26889        NA      7.7       <NA>          <NA>
+    ## 29484        NA       NA       <NA>          <NA>
+
+``` r
+housing_dataset[is.na(housing_dataset$Propertycount), ]
+```
+
+    ##             Date        Type  Price Landsize BuildingArea Rooms Bathroom Car
+    ## 18524 2017-07-15 Unit/Duplex 710000       NA           NA     2       NA  NA
+    ## 26889 2017-11-11       House 825000       NA           NA     2       NA  NA
+    ## 29484 2018-01-06       House 616000       NA           NA     3       NA  NA
+    ##       YearBuilt Distance Regionname Propertycount
+    ## 18524        NA      5.1       <NA>          <NA>
+    ## 26889        NA      7.7       <NA>          <NA>
+    ## 29484        NA       NA       <NA>          <NA>
+
+It seems that these 3 columns are missing 3 rows in common. We have the
+“Distance” data in the 2 missing rows, and as we know, the “Distance”,
+“Regionname”, and “Propertycount” columns are there to provide the same
+information: the area where the property is located. With that in mind,
+we can use this “Distance” data to predict other columns.
+
+First, let’s take a look at the regions where the “Distance” data is
+5.1.
+
+``` r
+summary(housing_dataset$Regionname[housing_dataset$Distance == 5.1])
+```
+
+    ##       Eastern Metropolitan           Eastern Victoria 
+    ##                          0                          0 
+    ##      Northern Metropolitan          Northern Victoria 
+    ##                          0                          0 
+    ## South-Eastern Metropolitan      Southern Metropolitan 
+    ##                          0                         76 
+    ##       Western Metropolitan           Western Victoria 
+    ##                        170                          0 
+    ##                       NA's 
+    ##                          2
+
+When we perform some mathematical operations on the above data, we
+obtain the Regionname value of the first row can be Western Metropolitan
+with a probability of 69.1%, or Southern Metropolitan with a probability
+of 30.9%. Accordingly, instead of deleting this data, we can add it to
+the analysis by restoring it.
+
+``` r
+housing_dataset[18524, "Regionname"] <- "Western Metropolitan"
+```
+
+Now let’s do the same steps for second line.
+
+``` r
+summary(housing_dataset$Regionname[housing_dataset$Distance == 7.7])
+```
+
+    ##       Eastern Metropolitan           Eastern Victoria 
+    ##                          0                          0 
+    ##      Northern Metropolitan          Northern Victoria 
+    ##                          0                          0 
+    ## South-Eastern Metropolitan      Southern Metropolitan 
+    ##                          0                        352 
+    ##       Western Metropolitan           Western Victoria 
+    ##                         31                          0 
+    ##                       NA's 
+    ##                          2
+
+When we do the same operations for the second line, we get the Southern
+Metropolitan value with a probability of 91.9% and a Western
+Metropolitan value with a probability of 8.1%. Based on this
+information, we can assume the Regionname of second line to be Southern
+Metropolitan and include it in the analysis.
+
+``` r
+housing_dataset[26889, "Regionname"] <- "Southern Metropolitan"
+```
+
+We can do a similar approach for the “Propertycount” column. If we
+examine the property area where the properties are located in that
+region and include the house prices in this examination, we can find
+where these properties belong.
+
+``` r
+summary(housing_dataset$Propertycount[housing_dataset$Distance == 5.1 &
+                                      housing_dataset$Regionname == "Western Metropolitan"])
+```
+
+    ##    7570    2417      83     121     129     242     249     271     290     335 
+    ##     119      51       0       0       0       0       0       0       0       0 
+    ##     342     389     394     438     457     534     538     570     588     604 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##     608     642     709     768     777     790     794     802     810     821 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##     845     849     851     852     869     892     902     915     938     962 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##     973     984    1008    1048    1052    1058    1071    1119    1123    1124 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##    1130    1158    1160    1184    1202    1223    1240    1281    1308    1328 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##    1345    1369    1390    1414    1424    1442    1475    1490    1543    1554 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##    1588    1595    1607    1624    1651    1686    1690    1705    1721    1793 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##    1808    1863    1889    1899    1989    1999    2003    2004    2019    2076 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##    2079    2126    2170    2185    2206    2211    2230    2243 (Other)    NA's 
+    ##       0       0       0       0       0       0       0       0       0       2
+
+When we look at the table above, we can say that this property is more
+likely to be located in the area with 7570 properties. However, it is
+also useful to compare the price.
+
+``` r
+housing_dataset[18524, "Price"]
+```
+
+    ## [1] 710000
+
+``` r
+summary(housing_dataset$Price[housing_dataset$Distance == 5.1 &
+                              housing_dataset$Regionname == "Western Metropolitan" &
+                              housing_dataset$Propertycount == 7570])
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##  170000  453750  800000  736400  919000 1560000      21
+
+``` r
+summary(housing_dataset$Price[housing_dataset$Distance == 5.1 &
+                              housing_dataset$Regionname == "Western Metropolitan" &
+                              housing_dataset$Propertycount == 2417])
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##  322500  853000  985000 1003046 1129250 1870000       9
+
+The value of this property is defined as 710.000 units. When we look at
+the mean and median price values in two different fields, the arrows
+again shows the field with 7570 properties. With this information, we
+edit the Propertycount of this property as 7570 and include it in our
+analysis.
+
+``` r
+housing_dataset[18524, "Propertycount"] <- 7570
+```
+
+Now let’s do the same approach for the second row.
+
+``` r
+summary(housing_dataset$Propertycount[housing_dataset$Distance == 7.7 &
+                                      housing_dataset$Regionname == "Southern Metropolitan"])
+```
+
+    ##    8920    8989      83     121     129     242     249     271     290     335 
+    ##     196     156       0       0       0       0       0       0       0       0 
+    ##     342     389     394     438     457     534     538     570     588     604 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##     608     642     709     768     777     790     794     802     810     821 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##     845     849     851     852     869     892     902     915     938     962 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##     973     984    1008    1048    1052    1058    1071    1119    1123    1124 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##    1130    1158    1160    1184    1202    1223    1240    1281    1308    1328 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##    1345    1369    1390    1414    1424    1442    1475    1490    1543    1554 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##    1588    1595    1607    1624    1651    1686    1690    1705    1721    1793 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##    1808    1863    1889    1899    1989    1999    2003    2004    2019    2076 
+    ##       0       0       0       0       0       0       0       0       0       0 
+    ##    2079    2126    2170    2185    2206    2211    2230    2243 (Other)    NA's 
+    ##       0       0       0       0       0       0       0       0       0       2
+
+It is very difficult to make a prediction based on the above table.
+There are almost equal number of properties in 2 different regions.
+Therefore, we will make a prediction based on the price values.
+
+``` r
+housing_dataset[26889, "Price"]
+```
+
+    ## [1] 825000
+
+``` r
+summary(housing_dataset$Price[housing_dataset$Distance == 7.7 &
+                              housing_dataset$Regionname == "Southern Metropolitan" &
+                              housing_dataset$Propertycount == 8920])
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##  410000 1205000 1845000 1874412 2396250 6000000      60
+
+``` r
+summary(housing_dataset$Price[housing_dataset$Distance == 7.7 &
+                              housing_dataset$Regionname == "Southern Metropolitan" &
+                              housing_dataset$Propertycount == 8989])
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##  300000  559000  685000  931183 1180000 3572000      49
+
+The value of our second property is defined as 825.000 units. When we
+look at the mean and median values in two different area, we can easily
+say that this property belongs to the second area. Therefore, we change
+the “Propertycount” data of this property to 8989.
+
+``` r
+housing_dataset[26889, "Propertycount"] <- 8989
+```
+
+We recovered two of the 3 missing rows. Let’s take a look at the third
+one.
+
+``` r
+housing_dataset[29484, ]
+```
+
+    ##             Date  Type  Price Landsize BuildingArea Rooms Bathroom Car
+    ## 29484 2018-01-06 House 616000       NA           NA     3       NA  NA
+    ##       YearBuilt Distance Regionname Propertycount
+    ## 29484        NA       NA       <NA>          <NA>
+
+Unfortunately there is nothing we can do for this row. While we only
+have the number of rooms and the price, there is no way we can recover
+such missing data. Therefore, we will not include this row in our
+analysis.
+
+``` r
+housing_dataset <- housing_dataset[-c(29484), ]
+```
+
+Before concluding this section, let’s take a final look at a summary of
+our data.
+
+``` r
+summary(housing_dataset)
+```
+
+    ##       Date                     Type           Price             Landsize       
+    ##  Min.   :2016-01-28   House      :23979   Min.   :   85000   Min.   :     0.0  
+    ##  1st Qu.:2016-11-19   Townhouse  : 3580   1st Qu.:  635000   1st Qu.:   224.0  
+    ##  Median :2017-07-08   Unit/Duplex: 7297   Median :  870000   Median :   521.0  
+    ##  Mean   :2017-05-23                       Mean   : 1050189   Mean   :   593.6  
+    ##  3rd Qu.:2017-10-28                       3rd Qu.: 1295000   3rd Qu.:   670.0  
+    ##  Max.   :2018-03-17                       Max.   :11200000   Max.   :433014.0  
+    ##                                           NA's   :7610       NA's   :11809     
+    ##   BuildingArea         Rooms           Bathroom           Car        
+    ##  Min.   :    0.0   Min.   : 1.000   Min.   : 0.000   Min.   : 0.000  
+    ##  1st Qu.:  102.0   1st Qu.: 2.000   1st Qu.: 1.000   1st Qu.: 1.000  
+    ##  Median :  136.0   Median : 3.000   Median : 2.000   Median : 2.000  
+    ##  Mean   :  160.2   Mean   : 3.031   Mean   : 1.625   Mean   : 1.729  
+    ##  3rd Qu.:  188.0   3rd Qu.: 4.000   3rd Qu.: 2.000   3rd Qu.: 2.000  
+    ##  Max.   :44515.0   Max.   :16.000   Max.   :12.000   Max.   :26.000  
+    ##  NA's   :21114                      NA's   :8225     NA's   :8727    
+    ##    YearBuilt        Distance                          Regionname   
+    ##  Min.   :1196    Min.   : 0.00   Southern Metropolitan     :11837  
+    ##  1st Qu.:1940    1st Qu.: 6.40   Northern Metropolitan     : 9557  
+    ##  Median :1970    Median :10.30   Western Metropolitan      : 6800  
+    ##  Mean   :1965    Mean   :11.18   Eastern Metropolitan      : 4377  
+    ##  3rd Qu.:2000    3rd Qu.:14.00   South-Eastern Metropolitan: 1739  
+    ##  Max.   :2106    Max.   :48.10   Eastern Victoria          :  228  
+    ##  NA's   :19305                   (Other)                   :  318  
+    ##  Propertycount  
+    ##  21650  :  844  
+    ##  8870   :  722  
+    ##  10969  :  583  
+    ##  14949  :  552  
+    ##  10412  :  491  
+    ##  14577  :  485  
+    ##  (Other):31179

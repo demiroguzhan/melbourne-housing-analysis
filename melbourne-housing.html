@@ -602,7 +602,6 @@ padding-top: 0px;
 <body>
 
 <h1 id="melbourne-housing">Melbourne Housing</h1>
-<p>Oguzhan Demir 19/08/2023</p>
 <ul>
 <li><a href="#id_1-importing-dataset--pre-analysis">1 Importing Dataset
 / Pre-analysis</a></li>
@@ -623,6 +622,8 @@ Columns</a></li>
 <li><a href="#id_210-propertycount-column">2.10 PropertyCount
 Column</a></li>
 </ul></li>
+<li><a href="#id_3-dealing-with-missing-values">3 Dealing With Missing
+Values</a></li>
 </ul>
 <h1 id="id_1-importing-dataset--pre-analysis">1 Importing Dataset /
 Pre-analysis</h1>
@@ -633,8 +634,7 @@ analysis on data. Since we have some cells with “#N/A” text in it, R
 doesn’t see them as NA values. To avoid them, we are using na.strings
 parameter to import them as NA’s.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>housing_dataset <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;melbourne_data.csv&quot;</span>,</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>                            <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>, <span class="at">na.strings =</span> <span class="st">&quot;#N/A&quot;</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>backup <span class="ot">&lt;-</span> housing_dataset</span></code></pre></div>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>                            <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>, <span class="at">na.strings =</span> <span class="st">&quot;#N/A&quot;</span>)</span></code></pre></div>
 <p>Before doing any cleaning and altering, we are checking structure and
 summary of the data to have some understanding about our data that we
 will analyze.</p>
@@ -830,6 +830,222 @@ to see output.</em></p>
 ##     146     145     144     142     140     137     137     136     135     134 
 ##    3692   11925    4898    4380    3280   15542    2555    4553 (Other)    NA&#39;s 
 ##     134     134     133     132     131     129     126     124    9871       3</code></pre>
+<h1 id="id_3-dealing-with-missing-values">3 Dealing With Missing
+Values</h1>
+<p>First, let’s have a look the data we have obtained during the
+pre-process. Date Column: 0 missing rows Type Column: 0 missing rows
+Price Column: 7610 missing rows Landsize Column: 11810 missing rows
+BuildingArea Column: 21115 missing rows Rooms Column: 0 missing rows
+Bathroom Column: 8226 missing rows Car Column: 8728 missing rows
+earBuilt Column: 19306 missing rows Distance Column: 1 missing rows
+Regionname Column: 3 missing rows Propertycount Column: 3 missing
+rows</p>
+<p>When we look at the table above, we can see that the Distance,
+Regionname and Propertycount columns have very little missing data.
+Starting from this data will be the easiest step at this point.</p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a>housing_dataset[<span class="fu">is.na</span>(housing_dataset<span class="sc">$</span>Distance), ]</span></code></pre></div>
+<pre><code>##             Date  Type  Price Landsize BuildingArea Rooms Bathroom Car
+## 29484 2018-01-06 House 616000       NA           NA     3       NA  NA
+##       YearBuilt Distance Regionname Propertycount
+## 29484        NA       NA       &lt;NA&gt;          &lt;NA&gt;</code></pre>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a>housing_dataset[<span class="fu">is.na</span>(housing_dataset<span class="sc">$</span>Regionname), ]</span></code></pre></div>
+<pre><code>##             Date        Type  Price Landsize BuildingArea Rooms Bathroom Car
+## 18524 2017-07-15 Unit/Duplex 710000       NA           NA     2       NA  NA
+## 26889 2017-11-11       House 825000       NA           NA     2       NA  NA
+## 29484 2018-01-06       House 616000       NA           NA     3       NA  NA
+##       YearBuilt Distance Regionname Propertycount
+## 18524        NA      5.1       &lt;NA&gt;          &lt;NA&gt;
+## 26889        NA      7.7       &lt;NA&gt;          &lt;NA&gt;
+## 29484        NA       NA       &lt;NA&gt;          &lt;NA&gt;</code></pre>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" tabindex="-1"></a>housing_dataset[<span class="fu">is.na</span>(housing_dataset<span class="sc">$</span>Propertycount), ]</span></code></pre></div>
+<pre><code>##             Date        Type  Price Landsize BuildingArea Rooms Bathroom Car
+## 18524 2017-07-15 Unit/Duplex 710000       NA           NA     2       NA  NA
+## 26889 2017-11-11       House 825000       NA           NA     2       NA  NA
+## 29484 2018-01-06       House 616000       NA           NA     3       NA  NA
+##       YearBuilt Distance Regionname Propertycount
+## 18524        NA      5.1       &lt;NA&gt;          &lt;NA&gt;
+## 26889        NA      7.7       &lt;NA&gt;          &lt;NA&gt;
+## 29484        NA       NA       &lt;NA&gt;          &lt;NA&gt;</code></pre>
+<p>It seems that these 3 columns are missing 3 rows in common. We have
+the “Distance” data in the 2 missing rows, and as we know, the
+“Distance”, “Regionname”, and “Propertycount” columns are there to
+provide the same information: the area where the property is located.
+With that in mind, we can use this “Distance” data to predict other
+columns.</p>
+<p>First, let’s take a look at the regions where the “Distance” data is
+5.1.</p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a><span class="fu">summary</span>(housing_dataset<span class="sc">$</span>Regionname[housing_dataset<span class="sc">$</span>Distance <span class="sc">==</span> <span class="fl">5.1</span>])</span></code></pre></div>
+<pre><code>##       Eastern Metropolitan           Eastern Victoria 
+##                          0                          0 
+##      Northern Metropolitan          Northern Victoria 
+##                          0                          0 
+## South-Eastern Metropolitan      Southern Metropolitan 
+##                          0                         76 
+##       Western Metropolitan           Western Victoria 
+##                        170                          0 
+##                       NA&#39;s 
+##                          2</code></pre>
+<p>When we perform some mathematical operations on the above data, we
+obtain the Regionname value of the first row can be Western Metropolitan
+with a probability of 69.1%, or Southern Metropolitan with a probability
+of 30.9%. Accordingly, instead of deleting this data, we can add it to
+the analysis by restoring it.</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" tabindex="-1"></a>housing_dataset[<span class="dv">18524</span>, <span class="st">&quot;Regionname&quot;</span>] <span class="ot">&lt;-</span> <span class="st">&quot;Western Metropolitan&quot;</span></span></code></pre></div>
+<p>Now let’s do the same steps for second line.</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" tabindex="-1"></a><span class="fu">summary</span>(housing_dataset<span class="sc">$</span>Regionname[housing_dataset<span class="sc">$</span>Distance <span class="sc">==</span> <span class="fl">7.7</span>])</span></code></pre></div>
+<pre><code>##       Eastern Metropolitan           Eastern Victoria 
+##                          0                          0 
+##      Northern Metropolitan          Northern Victoria 
+##                          0                          0 
+## South-Eastern Metropolitan      Southern Metropolitan 
+##                          0                        352 
+##       Western Metropolitan           Western Victoria 
+##                         31                          0 
+##                       NA&#39;s 
+##                          2</code></pre>
+<p>When we do the same operations for the second line, we get the
+Southern Metropolitan value with a probability of 91.9% and a Western
+Metropolitan value with a probability of 8.1%. Based on this
+information, we can assume the Regionname of second line to be Southern
+Metropolitan and include it in the analysis.</p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" tabindex="-1"></a>housing_dataset[<span class="dv">26889</span>, <span class="st">&quot;Regionname&quot;</span>] <span class="ot">&lt;-</span> <span class="st">&quot;Southern Metropolitan&quot;</span></span></code></pre></div>
+<p>We can do a similar approach for the “Propertycount” column. If we
+examine the property area where the properties are located in that
+region and include the house prices in this examination, we can find
+where these properties belong.</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" tabindex="-1"></a><span class="fu">summary</span>(housing_dataset<span class="sc">$</span>Propertycount[housing_dataset<span class="sc">$</span>Distance <span class="sc">==</span> <span class="fl">5.1</span> <span class="sc">&amp;</span></span>
+<span id="cb79-2"><a href="#cb79-2" tabindex="-1"></a>                                      housing_dataset<span class="sc">$</span>Regionname <span class="sc">==</span> <span class="st">&quot;Western Metropolitan&quot;</span>])</span></code></pre></div>
+<pre><code>##    7570    2417      83     121     129     242     249     271     290     335 
+##     119      51       0       0       0       0       0       0       0       0 
+##     342     389     394     438     457     534     538     570     588     604 
+##       0       0       0       0       0       0       0       0       0       0 
+##     608     642     709     768     777     790     794     802     810     821 
+##       0       0       0       0       0       0       0       0       0       0 
+##     845     849     851     852     869     892     902     915     938     962 
+##       0       0       0       0       0       0       0       0       0       0 
+##     973     984    1008    1048    1052    1058    1071    1119    1123    1124 
+##       0       0       0       0       0       0       0       0       0       0 
+##    1130    1158    1160    1184    1202    1223    1240    1281    1308    1328 
+##       0       0       0       0       0       0       0       0       0       0 
+##    1345    1369    1390    1414    1424    1442    1475    1490    1543    1554 
+##       0       0       0       0       0       0       0       0       0       0 
+##    1588    1595    1607    1624    1651    1686    1690    1705    1721    1793 
+##       0       0       0       0       0       0       0       0       0       0 
+##    1808    1863    1889    1899    1989    1999    2003    2004    2019    2076 
+##       0       0       0       0       0       0       0       0       0       0 
+##    2079    2126    2170    2185    2206    2211    2230    2243 (Other)    NA&#39;s 
+##       0       0       0       0       0       0       0       0       0       2</code></pre>
+<p>When we look at the table above, we can say that this property is
+more likely to be located in the area with 7570 properties. However, it
+is also useful to compare the price.</p>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" tabindex="-1"></a>housing_dataset[<span class="dv">18524</span>, <span class="st">&quot;Price&quot;</span>]</span></code></pre></div>
+<pre><code>## [1] 710000</code></pre>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" tabindex="-1"></a><span class="fu">summary</span>(housing_dataset<span class="sc">$</span>Price[housing_dataset<span class="sc">$</span>Distance <span class="sc">==</span> <span class="fl">5.1</span> <span class="sc">&amp;</span></span>
+<span id="cb83-2"><a href="#cb83-2" tabindex="-1"></a>                              housing_dataset<span class="sc">$</span>Regionname <span class="sc">==</span> <span class="st">&quot;Western Metropolitan&quot;</span> <span class="sc">&amp;</span></span>
+<span id="cb83-3"><a href="#cb83-3" tabindex="-1"></a>                              housing_dataset<span class="sc">$</span>Propertycount <span class="sc">==</span> <span class="dv">7570</span>])</span></code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##  170000  453750  800000  736400  919000 1560000      21</code></pre>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" tabindex="-1"></a><span class="fu">summary</span>(housing_dataset<span class="sc">$</span>Price[housing_dataset<span class="sc">$</span>Distance <span class="sc">==</span> <span class="fl">5.1</span> <span class="sc">&amp;</span></span>
+<span id="cb85-2"><a href="#cb85-2" tabindex="-1"></a>                              housing_dataset<span class="sc">$</span>Regionname <span class="sc">==</span> <span class="st">&quot;Western Metropolitan&quot;</span> <span class="sc">&amp;</span></span>
+<span id="cb85-3"><a href="#cb85-3" tabindex="-1"></a>                              housing_dataset<span class="sc">$</span>Propertycount <span class="sc">==</span> <span class="dv">2417</span>])</span></code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##  322500  853000  985000 1003046 1129250 1870000       9</code></pre>
+<p>The value of this property is defined as 710.000 units. When we look
+at the mean and median price values in two different fields, the arrows
+again shows the field with 7570 properties. With this information, we
+edit the Propertycount of this property as 7570 and include it in our
+analysis.</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" tabindex="-1"></a>housing_dataset[<span class="dv">18524</span>, <span class="st">&quot;Propertycount&quot;</span>] <span class="ot">&lt;-</span> <span class="dv">7570</span></span></code></pre></div>
+<p>Now let’s do the same approach for the second row.</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" tabindex="-1"></a><span class="fu">summary</span>(housing_dataset<span class="sc">$</span>Propertycount[housing_dataset<span class="sc">$</span>Distance <span class="sc">==</span> <span class="fl">7.7</span> <span class="sc">&amp;</span></span>
+<span id="cb88-2"><a href="#cb88-2" tabindex="-1"></a>                                      housing_dataset<span class="sc">$</span>Regionname <span class="sc">==</span> <span class="st">&quot;Southern Metropolitan&quot;</span>])</span></code></pre></div>
+<pre><code>##    8920    8989      83     121     129     242     249     271     290     335 
+##     196     156       0       0       0       0       0       0       0       0 
+##     342     389     394     438     457     534     538     570     588     604 
+##       0       0       0       0       0       0       0       0       0       0 
+##     608     642     709     768     777     790     794     802     810     821 
+##       0       0       0       0       0       0       0       0       0       0 
+##     845     849     851     852     869     892     902     915     938     962 
+##       0       0       0       0       0       0       0       0       0       0 
+##     973     984    1008    1048    1052    1058    1071    1119    1123    1124 
+##       0       0       0       0       0       0       0       0       0       0 
+##    1130    1158    1160    1184    1202    1223    1240    1281    1308    1328 
+##       0       0       0       0       0       0       0       0       0       0 
+##    1345    1369    1390    1414    1424    1442    1475    1490    1543    1554 
+##       0       0       0       0       0       0       0       0       0       0 
+##    1588    1595    1607    1624    1651    1686    1690    1705    1721    1793 
+##       0       0       0       0       0       0       0       0       0       0 
+##    1808    1863    1889    1899    1989    1999    2003    2004    2019    2076 
+##       0       0       0       0       0       0       0       0       0       0 
+##    2079    2126    2170    2185    2206    2211    2230    2243 (Other)    NA&#39;s 
+##       0       0       0       0       0       0       0       0       0       2</code></pre>
+<p>It is very difficult to make a prediction based on the above table.
+There are almost equal number of properties in 2 different regions.
+Therefore, we will make a prediction based on the price values.</p>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" tabindex="-1"></a>housing_dataset[<span class="dv">26889</span>, <span class="st">&quot;Price&quot;</span>]</span></code></pre></div>
+<pre><code>## [1] 825000</code></pre>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" tabindex="-1"></a><span class="fu">summary</span>(housing_dataset<span class="sc">$</span>Price[housing_dataset<span class="sc">$</span>Distance <span class="sc">==</span> <span class="fl">7.7</span> <span class="sc">&amp;</span></span>
+<span id="cb92-2"><a href="#cb92-2" tabindex="-1"></a>                              housing_dataset<span class="sc">$</span>Regionname <span class="sc">==</span> <span class="st">&quot;Southern Metropolitan&quot;</span> <span class="sc">&amp;</span></span>
+<span id="cb92-3"><a href="#cb92-3" tabindex="-1"></a>                              housing_dataset<span class="sc">$</span>Propertycount <span class="sc">==</span> <span class="dv">8920</span>])</span></code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##  410000 1205000 1845000 1874412 2396250 6000000      60</code></pre>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" tabindex="-1"></a><span class="fu">summary</span>(housing_dataset<span class="sc">$</span>Price[housing_dataset<span class="sc">$</span>Distance <span class="sc">==</span> <span class="fl">7.7</span> <span class="sc">&amp;</span></span>
+<span id="cb94-2"><a href="#cb94-2" tabindex="-1"></a>                              housing_dataset<span class="sc">$</span>Regionname <span class="sc">==</span> <span class="st">&quot;Southern Metropolitan&quot;</span> <span class="sc">&amp;</span></span>
+<span id="cb94-3"><a href="#cb94-3" tabindex="-1"></a>                              housing_dataset<span class="sc">$</span>Propertycount <span class="sc">==</span> <span class="dv">8989</span>])</span></code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##  300000  559000  685000  931183 1180000 3572000      49</code></pre>
+<p>The value of our second property is defined as 825.000 units. When we
+look at the mean and median values in two different area, we can easily
+say that this property belongs to the second area. Therefore, we change
+the “Propertycount” data of this property to 8989.</p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" tabindex="-1"></a>housing_dataset[<span class="dv">26889</span>, <span class="st">&quot;Propertycount&quot;</span>] <span class="ot">&lt;-</span> <span class="dv">8989</span></span></code></pre></div>
+<p>We recovered two of the 3 missing rows. Let’s take a look at the
+third one.</p>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" tabindex="-1"></a>housing_dataset[<span class="dv">29484</span>, ]</span></code></pre></div>
+<pre><code>##             Date  Type  Price Landsize BuildingArea Rooms Bathroom Car
+## 29484 2018-01-06 House 616000       NA           NA     3       NA  NA
+##       YearBuilt Distance Regionname Propertycount
+## 29484        NA       NA       &lt;NA&gt;          &lt;NA&gt;</code></pre>
+<p>Unfortunately there is nothing we can do for this row. While we only
+have the number of rooms and the price, there is no way we can recover
+such missing data. Therefore, we will not include this row in our
+analysis.</p>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" tabindex="-1"></a>housing_dataset <span class="ot">&lt;-</span> housing_dataset[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">29484</span>), ]</span></code></pre></div>
+<p>Before concluding this section, let’s take a final look at a summary
+of our data.</p>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" tabindex="-1"></a><span class="fu">summary</span>(housing_dataset)</span></code></pre></div>
+<pre><code>##       Date                     Type           Price             Landsize       
+##  Min.   :2016-01-28   House      :23979   Min.   :   85000   Min.   :     0.0  
+##  1st Qu.:2016-11-19   Townhouse  : 3580   1st Qu.:  635000   1st Qu.:   224.0  
+##  Median :2017-07-08   Unit/Duplex: 7297   Median :  870000   Median :   521.0  
+##  Mean   :2017-05-23                       Mean   : 1050189   Mean   :   593.6  
+##  3rd Qu.:2017-10-28                       3rd Qu.: 1295000   3rd Qu.:   670.0  
+##  Max.   :2018-03-17                       Max.   :11200000   Max.   :433014.0  
+##                                           NA&#39;s   :7610       NA&#39;s   :11809     
+##   BuildingArea         Rooms           Bathroom           Car        
+##  Min.   :    0.0   Min.   : 1.000   Min.   : 0.000   Min.   : 0.000  
+##  1st Qu.:  102.0   1st Qu.: 2.000   1st Qu.: 1.000   1st Qu.: 1.000  
+##  Median :  136.0   Median : 3.000   Median : 2.000   Median : 2.000  
+##  Mean   :  160.2   Mean   : 3.031   Mean   : 1.625   Mean   : 1.729  
+##  3rd Qu.:  188.0   3rd Qu.: 4.000   3rd Qu.: 2.000   3rd Qu.: 2.000  
+##  Max.   :44515.0   Max.   :16.000   Max.   :12.000   Max.   :26.000  
+##  NA&#39;s   :21114                      NA&#39;s   :8225     NA&#39;s   :8727    
+##    YearBuilt        Distance                          Regionname   
+##  Min.   :1196    Min.   : 0.00   Southern Metropolitan     :11837  
+##  1st Qu.:1940    1st Qu.: 6.40   Northern Metropolitan     : 9557  
+##  Median :1970    Median :10.30   Western Metropolitan      : 6800  
+##  Mean   :1965    Mean   :11.18   Eastern Metropolitan      : 4377  
+##  3rd Qu.:2000    3rd Qu.:14.00   South-Eastern Metropolitan: 1739  
+##  Max.   :2106    Max.   :48.10   Eastern Victoria          :  228  
+##  NA&#39;s   :19305                   (Other)                   :  318  
+##  Propertycount  
+##  21650  :  844  
+##  8870   :  722  
+##  10969  :  583  
+##  14949  :  552  
+##  10412  :  491  
+##  14577  :  485  
+##  (Other):31179</code></pre>
 
 </body>
 </html>
