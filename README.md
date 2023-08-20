@@ -15,7 +15,8 @@ Melbourne Housing
   - [2.8 Distance Column](#28-distance-column)
   - [2.9 Regionname Column](#29-regionname-column)
   - [2.10 PropertyCount Column](#210-propertycount-column)
-- [3 Replacing Missing Values](#3-replacing-missing-values)
+- [3 Manually Replacing Missing
+  Values](#3-manually-replacing-missing-values)
 - [4 Outliers](#4-outliers)
   - [4.1 Price Column Outliers](#41-price-column-outliers)
   - [4.2 Landsize Column Outliers](#42-landsize-column-outliers)
@@ -24,6 +25,8 @@ Melbourne Housing
   - [4.5 Bathroom Column Outliers](#45-bathroom-column-outliers)
   - [4.6 Car Column Outliers](#46-car-column-outliers)
   - [4.7 YearBuilt Column Outliers](#47-yearbuilt-column-outliers)
+- [5 Replacing Missing Values Using “mice”
+  Package](#5-replacing-missing-values-using-mice-package)
 
 # 1 Importing Dataset / Pre-analysis
 
@@ -394,7 +397,7 @@ summary(housing_dataset$Propertycount)
     ##    3692   11925    4898    4380    3280   15542    2555    4553 (Other)    NA's 
     ##     134     134     133     132     131     129     126     124    9871       3
 
-# 3 Replacing Missing Values
+# 3 Manually Replacing Missing Values
 
 First, let’s have a look the data we have obtained during the
 pre-process.
@@ -1066,3 +1069,187 @@ summary(housing_dataset)
 
 Everything looks good. Then we can begin to dealing with our missing
 data.
+
+# 5 Replacing Missing Values Using “mice” Package
+
+In this section, we will mainly use the “mice” package. To speak
+briefly, the “mice” package implements a method to deal with missing
+data. The package creates multiple imputations (replacement values) for
+multivariate missing data. The method is based on Fully Conditional
+Specification, where each incomplete variable is imputed by a separate
+model. The “mice” algorithm can impute mixes of continuous, binary,
+unordered categorical and ordered categorical data. In addition, “mice”
+can impute continuous two-level data, and maintain consistency between
+imputations by means of passive imputation. Many diagnostic plots are
+implemented to inspect the quality of the imputations.
+
+Let’s activate the “mice” package and create a “mice” object with 0
+iteration. The reason we do 0 iterations is that we don’t want to do any
+action yet, but we want to reach the drafts that will be used in the
+process to be done.
+
+``` r
+library(mice)
+```
+
+    ## 
+    ## Attaching package: 'mice'
+
+    ## The following object is masked from 'package:stats':
+    ## 
+    ##     filter
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     cbind, rbind
+
+``` r
+init <- mice(housing_dataset, maxit = 0)
+```
+
+This “mice” object, which we have created with the name “init”, contains
+very different values. Since we want to create our own method, we define
+the method value to an object named “meth”.
+
+``` r
+meth <- init$method
+meth
+```
+
+    ##          Date          Type         Price      Landsize  BuildingArea 
+    ##            ""            ""         "pmm"         "pmm"         "pmm" 
+    ##         Rooms      Bathroom           Car     YearBuilt      Distance 
+    ##            ""         "pmm"         "pmm"         "pmm"            "" 
+    ##    Regionname Propertycount 
+    ##            ""            ""
+
+Here, it says which method will be used for which column. These values
+are the models prepared automatically by the “mice” package, and they
+look fine. However, the “YearBuilt” and “BuildingArea” columns in our
+data contain a large amount of missing data. Therefore, we do not want
+to make a prediction on these. For this reason, we will leave the
+methods below them blank.
+
+``` r
+meth[c("YearBuilt", "BuildingArea")] <- ""
+```
+
+Then we will use the “quickpred” function of the “mice” package to
+determine which columns will be used as predictors for which data.
+
+``` r
+pred_m <- quickpred(housing_dataset, mincor = 0.2)
+pred_m
+```
+
+    ##               Date Type Price Landsize BuildingArea Rooms Bathroom Car
+    ## Date             0    0     0        0            0     0        0   0
+    ## Type             0    0     0        0            0     0        0   0
+    ## Price            0    1     0        0            1     1        1   0
+    ## Landsize         0    1     0        0            1     0        0   1
+    ## BuildingArea     0    1     1        1            0     1        1   1
+    ## Rooms            0    0     0        0            0     0        0   0
+    ## Bathroom         0    1     1        0            1     1        0   1
+    ## Car              0    1     0        1            1     1        1   0
+    ## YearBuilt        0    1     1        0            0     0        1   0
+    ## Distance         0    0     0        0            0     0        0   0
+    ## Regionname       0    0     0        0            0     0        0   0
+    ## Propertycount    0    0     0        0            0     0        0   0
+    ##               YearBuilt Distance Regionname Propertycount
+    ## Date                  0        0          0             0
+    ## Type                  0        0          0             0
+    ## Price                 1        1          0             0
+    ## Landsize              0        1          0             0
+    ## BuildingArea          0        0          0             0
+    ## Rooms                 0        0          0             0
+    ## Bathroom              1        0          0             0
+    ## Car                   0        1          0             0
+    ## YearBuilt             0        1          0             0
+    ## Distance              0        0          0             0
+    ## Regionname            0        0          0             0
+    ## Propertycount         0        0          0             0
+
+As we just mentioned, “YearBuilt” and “BuildingArea” contain a lot of
+missing data, so it can negatively affect the predictions and even cause
+some data to be unpredictable. That’s why we take them out of this
+matrix too.
+
+``` r
+pred_m[, c("Date", "YearBuilt", "BuildingArea")] <- 0
+```
+
+We are now ready to create our model. We create a “mice” object using
+the variables we created and our data and start predicting. Then we
+complete the created model and define it to our data.
+
+``` r
+imp <- mice(data = housing_dataset, method = meth, predictorMatrix = pred_m)
+```
+
+    ## 
+    ##  iter imp variable
+    ##   1   1  Price  Landsize  Bathroom  Car
+    ##   1   2  Price  Landsize  Bathroom  Car
+    ##   1   3  Price  Landsize  Bathroom  Car
+    ##   1   4  Price  Landsize  Bathroom  Car
+    ##   1   5  Price  Landsize  Bathroom  Car
+    ##   2   1  Price  Landsize  Bathroom  Car
+    ##   2   2  Price  Landsize  Bathroom  Car
+    ##   2   3  Price  Landsize  Bathroom  Car
+    ##   2   4  Price  Landsize  Bathroom  Car
+    ##   2   5  Price  Landsize  Bathroom  Car
+    ##   3   1  Price  Landsize  Bathroom  Car
+    ##   3   2  Price  Landsize  Bathroom  Car
+    ##   3   3  Price  Landsize  Bathroom  Car
+    ##   3   4  Price  Landsize  Bathroom  Car
+    ##   3   5  Price  Landsize  Bathroom  Car
+    ##   4   1  Price  Landsize  Bathroom  Car
+    ##   4   2  Price  Landsize  Bathroom  Car
+    ##   4   3  Price  Landsize  Bathroom  Car
+    ##   4   4  Price  Landsize  Bathroom  Car
+    ##   4   5  Price  Landsize  Bathroom  Car
+    ##   5   1  Price  Landsize  Bathroom  Car
+    ##   5   2  Price  Landsize  Bathroom  Car
+    ##   5   3  Price  Landsize  Bathroom  Car
+    ##   5   4  Price  Landsize  Bathroom  Car
+    ##   5   5  Price  Landsize  Bathroom  Car
+
+``` r
+housing_dataset <- complete(imp)
+```
+
+Finally, we drop the “Yearbuilt” and “BuildingArea” columns from our
+table and take a look at the summary of our data.
+
+``` r
+housing_dataset$BuildingArea <- NULL
+housing_dataset$YearBuilt <- NULL
+summary(housing_dataset)
+```
+
+    ##       Date                     Type           Price            Landsize     
+    ##  Min.   :2016-01-28   House      :22243   Min.   : 310000   Min.   :  82.0  
+    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 670000   1st Qu.: 300.0  
+    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 913000   Median : 556.0  
+    ##  Mean   :2017-06-07                       Mean   :1065931   Mean   : 561.3  
+    ##  3rd Qu.:2017-11-11                       3rd Qu.:1325000   3rd Qu.: 696.0  
+    ##  Max.   :2018-03-17                       Max.   :3400000   Max.   :3434.0  
+    ##                                                                             
+    ##      Rooms          Bathroom          Car           Distance    
+    ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.00  
+    ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 7.00  
+    ##  Median :3.000   Median :2.000   Median :2.000   Median :10.70  
+    ##  Mean   :3.083   Mean   :1.597   Mean   :1.695   Mean   :11.66  
+    ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:14.30  
+    ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :48.10  
+    ##                                                                 
+    ##                       Regionname   Propertycount  
+    ##  Southern Metropolitan     :9660   21650  :  788  
+    ##  Northern Metropolitan     :8232   8870   :  646  
+    ##  Western Metropolitan      :6106   10969  :  559  
+    ##  Eastern Metropolitan      :4107   14577  :  443  
+    ##  South-Eastern Metropolitan:1655   10412  :  425  
+    ##  Eastern Victoria          : 206   14949  :  410  
+    ##  (Other)                   : 283   (Other):26978
+
+Since we don’t have any missing data, our data is ready for analysis!
