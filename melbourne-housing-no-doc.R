@@ -122,74 +122,75 @@ quantile(housing_dataset$Price, 0.01, na.rm = TRUE)
 library(ggplot2)
 library(scales)
 
-ggplot(data=housing_dataset, aes(x=Price)) +
-  geom_histogram(bins=100) +
-  coord_cartesian(xlim=c(0,5000000)) +
+ggplot(data = housing_dataset, aes(x = Price)) +
+  geom_histogram(bins = 100) +
+  coord_cartesian(xlim = c(0, 5000000)) +
   scale_x_continuous(labels = unit_format(unit = "M", scale = 1e-6))
 
-housing_dataset <- housing_dataset[(housing_dataset$Price <= quantile(housing_dataset$Price, 0.99, na.rm = TRUE) | is.na(housing_dataset$Price)),]
-housing_dataset <- housing_dataset[(housing_dataset$Price >= quantile(housing_dataset$Price, 0.01, na.rm = TRUE) | is.na(housing_dataset$Price)),]
+housing_dataset <- housing_dataset[(housing_dataset$Price <= quantile(housing_dataset$Price, 0.99, na.rm = TRUE) | is.na(housing_dataset$Price)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Price >= quantile(housing_dataset$Price, 0.01, na.rm = TRUE) | is.na(housing_dataset$Price)), ]
 
 quantile(housing_dataset$Landsize, 0.99, na.rm = TRUE)
 quantile(housing_dataset$Landsize, 0.01, na.rm = TRUE)
 
-ggplot(data=housing_dataset, aes(x=Landsize)) +
-  geom_histogram(bins=nrow(housing_dataset)) +
-  coord_cartesian(xlim=c(0,500), ylim=c(0,5000))
+ggplot(data = housing_dataset, aes(x = Landsize)) +
+  geom_histogram(bins = nrow(housing_dataset)) +
+  coord_cartesian(xlim = c(0, 500), ylim = c(0, 5000))
 
 housing_dataset <- housing_dataset[housing_dataset$Landsize > 0 | is.na(housing_dataset$Landsize), ]
 
 quantile(housing_dataset$Landsize, 0.99, na.rm = TRUE)
 quantile(housing_dataset$Landsize, 0.01, na.rm = TRUE)
 
-housing_dataset <- housing_dataset[(housing_dataset$Landsize < quantile(housing_dataset$Landsize, 0.99, na.rm = TRUE) | is.na(housing_dataset$Landsize)),]
-housing_dataset <- housing_dataset[(housing_dataset$Landsize > quantile(housing_dataset$Landsize, 0.01, na.rm = TRUE) | is.na(housing_dataset$Landsize)),]
+housing_dataset <- housing_dataset[(housing_dataset$Landsize < quantile(housing_dataset$Landsize, 0.99, na.rm = TRUE) | is.na(housing_dataset$Landsize)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Landsize > quantile(housing_dataset$Landsize, 0.01, na.rm = TRUE) | is.na(housing_dataset$Landsize)), ]
 
 quantile(housing_dataset$BuildingArea, 0.99, na.rm = TRUE)
 quantile(housing_dataset$BuildingArea, 0.01, na.rm = TRUE)
 
-ggplot(data=housing_dataset, aes(x=BuildingArea)) +
-  geom_histogram(bins=nrow(housing_dataset)) +
-  coord_cartesian(xlim=c(0,200), ylim=c(0,300))
+ggplot(data = housing_dataset, aes(x = BuildingArea)) +
+  geom_histogram(bins = nrow(housing_dataset)) +
+  coord_cartesian(xlim = c(0, 200), ylim = c(0, 300))
 
-ggplot(data=housing_dataset, aes(x=BuildingArea)) +
-  geom_histogram(bins=nrow(housing_dataset)) +
-  coord_cartesian(xlim=c(0,10), ylim=c(0,100))
+ggplot(data = housing_dataset, aes(x = BuildingArea)) +
+  geom_histogram(bins = nrow(housing_dataset)) +
+  coord_cartesian(xlim = c(0, 10), ylim = c(0, 100))
 
 housing_dataset <- housing_dataset[housing_dataset$BuildingArea > 5 | is.na(housing_dataset$BuildingArea), ]
 
 quantile(housing_dataset$BuildingArea, 0.99, na.rm = TRUE)
 quantile(housing_dataset$BuildingArea, 0.01, na.rm = TRUE)
 
-housing_dataset <- housing_dataset[(housing_dataset$BuildingArea < quantile(housing_dataset$BuildingArea, 0.99, na.rm = TRUE) | is.na(housing_dataset$BuildingArea)),]
-housing_dataset <- housing_dataset[(housing_dataset$BuildingArea > quantile(housing_dataset$BuildingArea, 0.01, na.rm = TRUE) | is.na(housing_dataset$BuildingArea)),]
+housing_dataset <- housing_dataset[(housing_dataset$BuildingArea < quantile(housing_dataset$BuildingArea, 0.99, na.rm = TRUE) | is.na(housing_dataset$BuildingArea)), ]
+housing_dataset <- housing_dataset[(housing_dataset$BuildingArea > quantile(housing_dataset$BuildingArea, 0.01, na.rm = TRUE) | is.na(housing_dataset$BuildingArea)), ]
 
-housing_dataset <- housing_dataset[housing_dataset$BuildingArea < housing_dataset$Landsize | is.na(housing_dataset$BuildingArea) | is.na(housing_dataset$Landsize),]
+housing_dataset <- housing_dataset[housing_dataset$BuildingArea < housing_dataset$Landsize | is.na(housing_dataset$BuildingArea) | is.na(housing_dataset$Landsize), ]
 
 quantile(housing_dataset$Rooms, 0.99, na.rm = TRUE)
 quantile(housing_dataset$Rooms, 0.01, na.rm = TRUE)
 
-housing_dataset <- housing_dataset[housing_dataset$Rooms <= quantile(housing_dataset$Rooms, 0.99, na.rm = TRUE),]
-housing_dataset <- housing_dataset[housing_dataset$Rooms >= quantile(housing_dataset$Rooms, 0.01, na.rm = TRUE),]
+housing_dataset <- housing_dataset[housing_dataset$Rooms <= quantile(housing_dataset$Rooms, 0.99, na.rm = TRUE), ]
+housing_dataset <- housing_dataset[housing_dataset$Rooms >= quantile(housing_dataset$Rooms, 0.01, na.rm = TRUE), ]
 
 quantile(housing_dataset$Bathroom, 0.99, na.rm = TRUE)
 quantile(housing_dataset$Bathroom, 0.01, na.rm = TRUE)
 
-housing_dataset <- housing_dataset[(housing_dataset$Bathroom <= quantile(housing_dataset$Bathroom, 0.99, na.rm = TRUE) | is.na(housing_dataset$Bathroom)),]
-housing_dataset <- housing_dataset[(housing_dataset$Bathroom >= quantile(housing_dataset$Bathroom, 0.01, na.rm = TRUE) | is.na(housing_dataset$Bathroom)),]
+housing_dataset <- housing_dataset[(housing_dataset$Bathroom <= quantile(housing_dataset$Bathroom, 0.99, na.rm = TRUE) | is.na(housing_dataset$Bathroom)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Bathroom >= quantile(housing_dataset$Bathroom, 0.01, na.rm = TRUE) | is.na(housing_dataset$Bathroom)), ]
 
 quantile(housing_dataset$Car, 0.99, na.rm = TRUE)
 quantile(housing_dataset$Car, 0.01, na.rm = TRUE)
 
-housing_dataset <- housing_dataset[(housing_dataset$Car <= quantile(housing_dataset$Car, 0.99, na.rm = TRUE) | is.na(housing_dataset$Car)),]
-housing_dataset <- housing_dataset[(housing_dataset$Car >= quantile(housing_dataset$Car, 0.01, na.rm = TRUE) | is.na(housing_dataset$Car)),]
+housing_dataset <- housing_dataset[(housing_dataset$Car <= quantile(housing_dataset$Car, 0.99, na.rm = TRUE) | is.na(housing_dataset$Car)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Car >= quantile(housing_dataset$Car, 0.01, na.rm = TRUE) | is.na(housing_dataset$Car)), ]
 
 quantile(housing_dataset$YearBuilt, 0.99, na.rm = TRUE)
 quantile(housing_dataset$YearBuilt, 0.01, na.rm = TRUE)
 
-housing_dataset <- housing_dataset[(housing_dataset$YearBuilt <= quantile(housing_dataset$YearBuilt, 0.99, na.rm = TRUE) | is.na(housing_dataset$YearBuilt)),]
-housing_dataset <- housing_dataset[(housing_dataset$YearBuilt >= quantile(housing_dataset$YearBuilt, 0.01, na.rm = TRUE) | is.na(housing_dataset$YearBuilt)),]
+housing_dataset <- housing_dataset[(housing_dataset$YearBuilt <= quantile(housing_dataset$YearBuilt, 0.99, na.rm = TRUE) | is.na(housing_dataset$YearBuilt)), ]
+housing_dataset <- housing_dataset[(housing_dataset$YearBuilt >= quantile(housing_dataset$YearBuilt, 0.01, na.rm = TRUE) | is.na(housing_dataset$YearBuilt)), ]
 
 summary(housing_dataset)
 
-knitr::purl(input = "melbourne-housing.Rmd", output = "melbourne-housing-no-doc.R",documentation = 0)
+knitr::purl(input = "melbourne-housing.Rmd", output = "melbourne-housing-no-doc.R", documentation = 0)
+file.rename(from = "melbourne-housing.md", to = "README.md")

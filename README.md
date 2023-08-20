@@ -751,9 +751,9 @@ library(scales)
 ```
 
 ``` r
-ggplot(data=housing_dataset, aes(x=Price)) +
-  geom_histogram(bins=100) +
-  coord_cartesian(xlim=c(0,5000000)) +
+ggplot(data = housing_dataset, aes(x = Price)) +
+  geom_histogram(bins = 100) +
+  coord_cartesian(xlim = c(0, 5000000)) +
   scale_x_continuous(labels = unit_format(unit = "M", scale = 1e-6))
 ```
 
@@ -767,8 +767,8 @@ missing values yet, we include missing values in our filter via OR
 operator.
 
 ``` r
-housing_dataset <- housing_dataset[(housing_dataset$Price <= quantile(housing_dataset$Price, 0.99, na.rm = TRUE) | is.na(housing_dataset$Price)),]
-housing_dataset <- housing_dataset[(housing_dataset$Price >= quantile(housing_dataset$Price, 0.01, na.rm = TRUE) | is.na(housing_dataset$Price)),]
+housing_dataset <- housing_dataset[(housing_dataset$Price <= quantile(housing_dataset$Price, 0.99, na.rm = TRUE) | is.na(housing_dataset$Price)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Price >= quantile(housing_dataset$Price, 0.01, na.rm = TRUE) | is.na(housing_dataset$Price)), ]
 ```
 
 ## 4.2 Landsize Column Outliers
@@ -795,9 +795,9 @@ be 0, that means there is something wrong in our data. To be sure, we
 will check the distribution of “Landsize” column in histogram.
 
 ``` r
-ggplot(data=housing_dataset, aes(x=Landsize)) +
-  geom_histogram(bins=nrow(housing_dataset)) +
-  coord_cartesian(xlim=c(0,500), ylim=c(0,5000))
+ggplot(data = housing_dataset, aes(x = Landsize)) +
+  geom_histogram(bins = nrow(housing_dataset)) +
+  coord_cartesian(xlim = c(0, 500), ylim = c(0, 5000))
 ```
 
 ![](melbourne-housing_files/figure-gfm/unnamed-chunk-49-1.png)<!-- -->
@@ -830,8 +830,8 @@ percentile which is acceptable. Now we can apply the same method that we
 were using to “Landsize” column.
 
 ``` r
-housing_dataset <- housing_dataset[(housing_dataset$Landsize < quantile(housing_dataset$Landsize, 0.99, na.rm = TRUE) | is.na(housing_dataset$Landsize)),]
-housing_dataset <- housing_dataset[(housing_dataset$Landsize > quantile(housing_dataset$Landsize, 0.01, na.rm = TRUE) | is.na(housing_dataset$Landsize)),]
+housing_dataset <- housing_dataset[(housing_dataset$Landsize < quantile(housing_dataset$Landsize, 0.99, na.rm = TRUE) | is.na(housing_dataset$Landsize)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Landsize > quantile(housing_dataset$Landsize, 0.01, na.rm = TRUE) | is.na(housing_dataset$Landsize)), ]
 ```
 
 ## 4.3 BuildingArea Column Outliers
@@ -859,9 +859,9 @@ which is stacked on low values. To approve that we will check
 BuildingArea column in chart.
 
 ``` r
-ggplot(data=housing_dataset, aes(x=BuildingArea)) +
-  geom_histogram(bins=nrow(housing_dataset)) +
-  coord_cartesian(xlim=c(0,200), ylim=c(0,300))
+ggplot(data = housing_dataset, aes(x = BuildingArea)) +
+  geom_histogram(bins = nrow(housing_dataset)) +
+  coord_cartesian(xlim = c(0, 200), ylim = c(0, 300))
 ```
 
     ## Warning: Removed 19528 rows containing non-finite values (`stat_bin()`).
@@ -872,9 +872,9 @@ As we can see in the chart, there are stacking near value 0. We will
 zoom more to see the problem more detailed.
 
 ``` r
-ggplot(data=housing_dataset, aes(x=BuildingArea)) +
-  geom_histogram(bins=nrow(housing_dataset)) +
-  coord_cartesian(xlim=c(0,10), ylim=c(0,100))
+ggplot(data = housing_dataset, aes(x = BuildingArea)) +
+  geom_histogram(bins = nrow(housing_dataset)) +
+  coord_cartesian(xlim = c(0, 10), ylim = c(0, 100))
 ```
 
 ![](melbourne-housing_files/figure-gfm/unnamed-chunk-55-1.png)<!-- -->
@@ -904,8 +904,8 @@ Now, we got 43.14 as lower value and 488.72 as upper value which is
 acceptable. Now we can apply our method on BuildingArea column.
 
 ``` r
-housing_dataset <- housing_dataset[(housing_dataset$BuildingArea < quantile(housing_dataset$BuildingArea, 0.99, na.rm = TRUE) | is.na(housing_dataset$BuildingArea)),]
-housing_dataset <- housing_dataset[(housing_dataset$BuildingArea > quantile(housing_dataset$BuildingArea, 0.01, na.rm = TRUE) | is.na(housing_dataset$BuildingArea)),]
+housing_dataset <- housing_dataset[(housing_dataset$BuildingArea < quantile(housing_dataset$BuildingArea, 0.99, na.rm = TRUE) | is.na(housing_dataset$BuildingArea)), ]
+housing_dataset <- housing_dataset[(housing_dataset$BuildingArea > quantile(housing_dataset$BuildingArea, 0.01, na.rm = TRUE) | is.na(housing_dataset$BuildingArea)), ]
 ```
 
 We detected some rows while checking our data frame which has bigger
@@ -913,7 +913,7 @@ building areas than landsizes which is unrealistic. So, we will exclude
 those rows aswell.
 
 ``` r
-housing_dataset <- housing_dataset[housing_dataset$BuildingArea < housing_dataset$Landsize | is.na(housing_dataset$BuildingArea) | is.na(housing_dataset$Landsize),]
+housing_dataset <- housing_dataset[housing_dataset$BuildingArea < housing_dataset$Landsize | is.na(housing_dataset$BuildingArea) | is.na(housing_dataset$Landsize), ]
 ```
 
 ## 4.4 Rooms Column Outliers
@@ -940,8 +940,8 @@ we will apply the same approach but we won’t include is.na() filtersince
 Rooms column doesn’t have any missing values in it.
 
 ``` r
-housing_dataset <- housing_dataset[housing_dataset$Rooms <= quantile(housing_dataset$Rooms, 0.99, na.rm = TRUE),]
-housing_dataset <- housing_dataset[housing_dataset$Rooms >= quantile(housing_dataset$Rooms, 0.01, na.rm = TRUE),]
+housing_dataset <- housing_dataset[housing_dataset$Rooms <= quantile(housing_dataset$Rooms, 0.99, na.rm = TRUE), ]
+housing_dataset <- housing_dataset[housing_dataset$Rooms >= quantile(housing_dataset$Rooms, 0.01, na.rm = TRUE), ]
 ```
 
 ## 4.5 Bathroom Column Outliers
@@ -967,8 +967,8 @@ returns us 4 and 1. We will exclude properties which has less than 1 and
 more than 4 bathrooms in it.
 
 ``` r
-housing_dataset <- housing_dataset[(housing_dataset$Bathroom <= quantile(housing_dataset$Bathroom, 0.99, na.rm = TRUE) | is.na(housing_dataset$Bathroom)),]
-housing_dataset <- housing_dataset[(housing_dataset$Bathroom >= quantile(housing_dataset$Bathroom, 0.01, na.rm = TRUE) | is.na(housing_dataset$Bathroom)),]
+housing_dataset <- housing_dataset[(housing_dataset$Bathroom <= quantile(housing_dataset$Bathroom, 0.99, na.rm = TRUE) | is.na(housing_dataset$Bathroom)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Bathroom >= quantile(housing_dataset$Bathroom, 0.01, na.rm = TRUE) | is.na(housing_dataset$Bathroom)), ]
 ```
 
 ## 4.6 Car Column Outliers
@@ -994,8 +994,8 @@ percentile. It’s acceptable because some houses may not have car parks.
 According to that we will apply the same approach to “Car” column.
 
 ``` r
-housing_dataset <- housing_dataset[(housing_dataset$Car <= quantile(housing_dataset$Car, 0.99, na.rm = TRUE) | is.na(housing_dataset$Car)),]
-housing_dataset <- housing_dataset[(housing_dataset$Car >= quantile(housing_dataset$Car, 0.01, na.rm = TRUE) | is.na(housing_dataset$Car)),]
+housing_dataset <- housing_dataset[(housing_dataset$Car <= quantile(housing_dataset$Car, 0.99, na.rm = TRUE) | is.na(housing_dataset$Car)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Car >= quantile(housing_dataset$Car, 0.01, na.rm = TRUE) | is.na(housing_dataset$Car)), ]
 ```
 
 ## 4.7 YearBuilt Column Outliers
@@ -1020,8 +1020,8 @@ We are applying same method to YearBuilt column because we get
 meaningful quantile results like 1880 to 2016.
 
 ``` r
-housing_dataset <- housing_dataset[(housing_dataset$YearBuilt <= quantile(housing_dataset$YearBuilt, 0.99, na.rm = TRUE) | is.na(housing_dataset$YearBuilt)),]
-housing_dataset <- housing_dataset[(housing_dataset$YearBuilt >= quantile(housing_dataset$YearBuilt, 0.01, na.rm = TRUE) | is.na(housing_dataset$YearBuilt)),]
+housing_dataset <- housing_dataset[(housing_dataset$YearBuilt <= quantile(housing_dataset$YearBuilt, 0.99, na.rm = TRUE) | is.na(housing_dataset$YearBuilt)), ]
+housing_dataset <- housing_dataset[(housing_dataset$YearBuilt >= quantile(housing_dataset$YearBuilt, 0.01, na.rm = TRUE) | is.na(housing_dataset$YearBuilt)), ]
 ```
 
 Before we end this section, let’s look at the summary of our data again
