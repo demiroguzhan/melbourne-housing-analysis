@@ -30,6 +30,18 @@ Melbourne Housing
 - [6 Analysis & Visualization](#6-analysis--visualization)
   - [6.1 Property Type Distribution (Pie
     Chart)](#61-property-type-distribution-pie-chart)
+  - [6.2 Property Distribution per Region (Bar
+    Chart)](#62-property-distribution-per-region-bar-chart)
+  - [6.3 Landsize Distribution
+    (Histogram)](#63-landsize-distribution-histogram)
+  - [6.4 Price vs Distance per Type(Scatter
+    Plot)](#64-price-vs-distance-per-typescatter-plot)
+  - [6.5 Price Analysis](#65-price-analysis)
+    - [6.5.1 Histogram](#651-histogram)
+    - [6.5.2 Grouping Properties by
+      Price](#652-grouping-properties-by-price)
+    - [6.5.3 Type vs Price (Boxplot)](#653-type-vs-price-boxplot)
+    - [6.5.4 Correlated Values](#654-correlated-values)
 
 # 1 Importing Dataset / Pre-analysis
 
@@ -1113,10 +1125,6 @@ iteration. The reason we do 0 iterations is that we don’t want to do any
 action yet, but we want to reach the drafts that will be used in the
 process to be done.
 
-``` r
-library(mice)
-```
-
     ## 
     ## Attaching package: 'mice'
 
@@ -1127,10 +1135,6 @@ library(mice)
     ## The following objects are masked from 'package:base':
     ## 
     ##     cbind, rbind
-
-``` r
-init <- mice(housing_dataset, maxit = 0)
-```
 
 This “mice” object, which we have created with the name “init”, contains
 very different values. Since we want to create our own method, we define
@@ -1252,19 +1256,19 @@ housing_dataset$YearBuilt <- NULL
 summary(housing_dataset)
 ```
 
-    ##       Date                     Type           Price            Landsize     
-    ##  Min.   :2016-01-28   House      :22243   Min.   : 310000   Min.   :  82.0  
-    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 675000   1st Qu.: 302.0  
-    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 910000   Median : 552.0  
-    ##  Mean   :2017-06-07                       Mean   :1065101   Mean   : 558.1  
-    ##  3rd Qu.:2017-11-11                       3rd Qu.:1320000   3rd Qu.: 691.0  
-    ##  Max.   :2018-03-17                       Max.   :3400000   Max.   :3434.0  
-    ##                                                                             
+    ##       Date                     Type           Price            Landsize   
+    ##  Min.   :2016-01-28   House      :22243   Min.   : 310000   Min.   :  82  
+    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 668500   1st Qu.: 305  
+    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 905000   Median : 550  
+    ##  Mean   :2017-06-07                       Mean   :1063894   Mean   : 547  
+    ##  3rd Qu.:2017-11-11                       3rd Qu.:1320000   3rd Qu.: 686  
+    ##  Max.   :2018-03-17                       Max.   :3400000   Max.   :3434  
+    ##                                                                           
     ##      Rooms          Bathroom          Car           Distance    
     ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.00  
     ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 7.00  
     ##  Median :3.000   Median :2.000   Median :2.000   Median :10.70  
-    ##  Mean   :3.083   Mean   :1.597   Mean   :1.695   Mean   :11.66  
+    ##  Mean   :3.083   Mean   :1.597   Mean   :1.688   Mean   :11.66  
     ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:14.30  
     ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :48.10  
     ##                                                                 
@@ -1285,19 +1289,19 @@ Since we don’t have any missing data, our data is ready for analysis!
 summary(housing_dataset)
 ```
 
-    ##       Date                     Type           Price            Landsize     
-    ##  Min.   :2016-01-28   House      :22243   Min.   : 310000   Min.   :  82.0  
-    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 675000   1st Qu.: 302.0  
-    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 910000   Median : 552.0  
-    ##  Mean   :2017-06-07                       Mean   :1065101   Mean   : 558.1  
-    ##  3rd Qu.:2017-11-11                       3rd Qu.:1320000   3rd Qu.: 691.0  
-    ##  Max.   :2018-03-17                       Max.   :3400000   Max.   :3434.0  
-    ##                                                                             
+    ##       Date                     Type           Price            Landsize   
+    ##  Min.   :2016-01-28   House      :22243   Min.   : 310000   Min.   :  82  
+    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 668500   1st Qu.: 305  
+    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 905000   Median : 550  
+    ##  Mean   :2017-06-07                       Mean   :1063894   Mean   : 547  
+    ##  3rd Qu.:2017-11-11                       3rd Qu.:1320000   3rd Qu.: 686  
+    ##  Max.   :2018-03-17                       Max.   :3400000   Max.   :3434  
+    ##                                                                           
     ##      Rooms          Bathroom          Car           Distance    
     ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.00  
     ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 7.00  
     ##  Median :3.000   Median :2.000   Median :2.000   Median :10.70  
-    ##  Mean   :3.083   Mean   :1.597   Mean   :1.695   Mean   :11.66  
+    ##  Mean   :3.083   Mean   :1.597   Mean   :1.688   Mean   :11.66  
     ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:14.30  
     ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :48.10  
     ##                                                                 
@@ -1310,8 +1314,12 @@ summary(housing_dataset)
     ##  Eastern Victoria          : 206   14949  :  410  
     ##  (Other)                   : 283   (Other):26978
 
-First, let’s take a look at the data we have. The “Date” column tells us
-that this data covers sales from January 2016 to March 2018.
+In this section, we will try to make an analysis on all the columns we
+have and try to use as much as different data visualization method that
+we can use. First, let’s take a look at the data we have.
+
+The “Date” column tells us that this data covers sales from January 2016
+to March 2018.
 
 When we look at the “Type” column, we can say that a large number of
 House sales were made. The number of Houses sold is almost 3 times the
@@ -1351,31 +1359,357 @@ used, and the pieChartData variable to use it as data.
 Since ggplot does not support pie chart directly, we will solve this by
 using a different method at this point. Of course, we can use R’s own
 pie chart function, but since we will do other charts via ggplot, I
-chose to stick with this package. For this, we first create a ggplot
-object. We use the pieChartData we created for the data layer.
-
-For the Aesthetic layer, we leave x blank and assign pieSlices to y. We
-assign the pieLables we created to the “fill” parameter. This creates
-our main ggplot object. Then we create a bar object for the geometry
+choose to stick with this package. For this, we will first create a
+ggplot object. We will use the “piechart_data” we created for the data
 layer.
 
-In order to make this barplot look like a pie chart, we will spread the
-bars we have around a point by 360 degrees by using coord_polar. Then we
-set the desired naming and colors and our pie chart is ready!
+For the Aesthetic layer, we will leave x blank and assign “pie_slices”
+to y. We will assign the “pie_labels” that we created to the “fill”
+parameter. This creates our main ggplot object. Then we will be creating
+a bar object for the geometry layer.
+
+In order to make barplot look like a pie chart, we will spread the bars
+we have around a point by 360 degrees by using coord_polar. Then we will
+set the desired naming and colors and our pie chart will be ready!
 
 ``` r
-housePercentage <- nrow(housing_dataset[housing_dataset$Type == "House",]) / nrow(housing_dataset)
-udPercentage <- nrow(housing_dataset[housing_dataset$Type == "Unit/Duplex",]) / nrow(housing_dataset)
-townhousePercentage <- nrow(housing_dataset[housing_dataset$Type == "Townhouse",]) / nrow(housing_dataset)
-pieSlices <- c(housePercentage, udPercentage, townhousePercentage)
-pieLabels <- c("House", "Unit/Duplex", "Townhouse")
-pieChartData <- data.frame(pieLabels, pieSlices)
-ggplot(data=pieChartData, aes(x="", y=pieSlices, fill=pieLabels)) +
-  geom_bar(stat="identity", width=1, color="white") +
+house_percentage <- nrow(housing_dataset[housing_dataset$Type == "House", ]) / nrow(housing_dataset)
+ud_percentage <- nrow(housing_dataset[housing_dataset$Type == "Unit/Duplex", ]) / nrow(housing_dataset)
+townhouse_percentage <- nrow(housing_dataset[housing_dataset$Type == "Townhouse", ]) / nrow(housing_dataset)
+
+pie_slices <- c(house_percentage, ud_percentage, townhouse_percentage)
+pie_labels <- c("House", "Unit/Duplex", "Townhouse")
+piechart_data <- data.frame(pie_labels, pie_slices)
+
+ggplot(data = piechart_data, aes(x = "", y = pie_slices, fill = pie_labels)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
   coord_polar("y", start = 0) +
   theme_void() +
   labs(title = "Property Type Distribution") +
-  labs(fill="Types")
+  labs(fill = "Types")
 ```
 
 ![](melbourne-housing_files/figure-gfm/unnamed-chunk-77-1.png)<!-- -->
+
+## 6.2 Property Distribution per Region (Bar Chart)
+
+We do not need to do any pre-processing while creating a bar chart. So
+we will start directly with the ggplot object.
+
+We will assign our data to the data layer, the “Regionname” column to
+the y coordinate of the aesthetic layer, and the “Type” column to the
+fill parameter for coloring.
+
+Then we will create our bar chart with the geom_bar() function and
+define the position parameter as “fill”. This is because in some areas
+there are almost no Townhouses and Units/Duplexes, so the “fill”
+position will make them look more readable. However, it uses percentage
+instead of count while doing this.
+
+Finally we will set the width to 0.8 purely for display purposes. After
+the desired theme and naming, our bar chart will be ready.
+
+``` r
+ggplot(data = housing_dataset, aes(y = Regionname, fill = Type)) +
+  geom_bar(position = "fill", width = 0.8) +
+  theme_bw() +
+  labs(title = "Property Distribution per Region") +
+  labs(x = "Percentage") + labs(y = "Region Name")
+```
+
+![](melbourne-housing_files/figure-gfm/unnamed-chunk-78-1.png)<!-- -->
+
+## 6.3 Landsize Distribution (Histogram)
+
+Creating a histogram is easier than others. We will create our ggplot
+object with our data and aesthetic values, and then we will add the
+histogram geometry to this object with the geom_histogram() function.
+
+It is important to set the number of bins correctly. Too high bin number
+will seem visually crowded, and too low may create a deficiency in the
+information it offers. We will set it to 25, thinking 25 will be
+appropriate.
+
+All other layers and parameters other than this are used for visual
+purposes. In short, our histogram is ready.
+
+``` r
+ggplot(data = housing_dataset, aes(x = Landsize)) +
+  geom_histogram(color = "black", bins = 25, fill = "orange") +
+  theme_classic() +
+  labs(title = "Landsize Histogram") + labs(y = "Count")
+```
+
+![](melbourne-housing_files/figure-gfm/unnamed-chunk-79-1.png)<!-- -->
+
+## 6.4 Price vs Distance per Type(Scatter Plot)
+
+Instead of using the scatter plot alone, we can make a better
+presentation by using facets and geom_smooth(). So, first we will create
+our ggplot object and then we will be createting our scatter plot using
+geom_point().
+
+At this point, the reason we lowered the alpha to 5% is to manage to
+visualize the clutter on the chart. Because we are using a lower alpha,
+the places with agglomeration will appear with a brighter color, while
+as the agglomeration decreases, we will see a dimmer color.
+
+We will use the facet_grid() function to present different property
+types. As we’ve used it before, we will be using the “scales” package to
+get smoother numbers, and instead of using 1e-16 to represent million,
+we will make the letter “M” appear. After adding our trend line to the
+scatter plot using geom_smooth(), we will make our final visual
+adjustments. Scatter plot ready!
+
+``` r
+ggplot(data = housing_dataset, aes(x = Distance, y = Price)) + geom_point(aes(color = Type), size = 2.5, alpha = 0.05) +
+  facet_grid(rows = housing_dataset$Type) +
+  scale_y_continuous(labels = unit_format(unit = "M", scale = 1e-6)) +
+  geom_smooth(method = "gam", formula = y ~ s(x, bs = "cs")) +
+  theme(legend.position = "none") +
+  labs(title = "Price Distribution in Distance to City Center")
+```
+
+![](melbourne-housing_files/figure-gfm/unnamed-chunk-80-1.png)<!-- -->
+
+## 6.5 Price Analysis
+
+### 6.5.1 Histogram
+
+As always when creating this histogram, after creating the ggplot
+object, we will be creating our histogram via geom_histogram(). Using
+geom_vline() and annotate(), we will place mean, median and standard
+deviation values in our histogram.
+
+After the desired naming and coloring, we see a table like this:
+
+``` r
+ggplot(data = housing_dataset, aes(x = Price)) +
+  geom_histogram(color = "black", bins = 25, fill = "beige") +
+  geom_vline(xintercept = round(mean(housing_dataset$Price)), color = "cyan3", size = 1) +
+  geom_vline(xintercept = round(median(housing_dataset$Price)), color = "purple", size = 1) +
+  geom_vline(xintercept = round(mean(housing_dataset$Price) + sd(housing_dataset$Price)), color = "darkseagreen4", size = 1) +
+  geom_vline(xintercept = round(mean(housing_dataset$Price) - sd(housing_dataset$Price)), color = "darkseagreen4", size = 1) +
+  annotate(geom = "label", x = round(mean(housing_dataset$Price)), y = 4800, label = paste("ST-Dev: ±", round(sd(housing_dataset$Price))), fill = "darkseagreen4", size = 3.5) +
+  annotate(geom = "label", x = round(mean(housing_dataset$Price)) + 360000, y = 3800, label = paste("Mean:", round(mean(housing_dataset$Price))), fill = "cyan3", size = 3.5) +
+  annotate(geom = "label", x = round(median(housing_dataset$Price)) + 370000, y = 4300, label = paste("Median:", round(median(housing_dataset$Price))), fill = "purple", size = 3.5) +
+  scale_x_continuous(breaks = round(seq(0, 5000000, by = 250000), 1), labels = unit_format(unit = "", scale = 1e-6)) +
+  labs(title = "Price Histogram") + labs(y = "Count") + labs(x = "Price (Million)")
+```
+
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
+
+![](melbourne-housing_files/figure-gfm/unnamed-chunk-81-1.png)<!-- -->
+
+When we look at our table, we can see why the median value is sometimes
+preferred more than the mean value. In this right-skewed (positive
+skeweness) histogram, we can see that although the density is on the
+left side, the low-frequency but high-value properties on the right side
+increase the mean value.
+
+If we examine our table, we can argue that the properties in our dataset
+are mostly valued between 500,000 and 1,000,000 units. When we look at
+the standard deviation value, choosing properties that we can evaluate
+between 500,000 and 1,600,000 units for future property constructions
+will secure our sales in the coming years. Since the sales of the houses
+outside this range are very few, the sales process will be much longer,
+which may cause disruption in our future planning. Of course, before
+making this decision, the expense spent on these properties should also
+be considered, but the data we have does not cover this. By doing a
+detailed research on Melbourne and Australia, we can find out how the
+property prices in Melbourne compare to the rest of the country, and
+inferences can be made about the average income status of people in the
+continuation of this research.
+
+### 6.5.2 Grouping Properties by Price
+
+For this grouping, instead of choosing random values, we will be using
+the 1st and 3rd quantile data. We will be defining properties with a
+price less than 1st quantile as low-priced houses, properties with a
+higher than 3rd quantile as high-priced houses, and properties between
+these two values as medium-priced houses.
+
+For this, first of all, let’s check the 25% and 75% values, which we
+call 1st and 3rd quantile, using the quantile function.
+
+``` r
+quantile(housing_dataset$Price, 0.25)
+```
+
+    ##    25% 
+    ## 668500
+
+``` r
+quantile(housing_dataset$Price, 0.75)
+```
+
+    ##     75% 
+    ## 1320000
+
+Then let’s use this data as a filter and define new variables.
+
+``` r
+lowpriced_properties <- housing_dataset[housing_dataset$Price < quantile(housing_dataset$Price, 0.25), ]
+midpriced_properties <- housing_dataset[housing_dataset$Price >= quantile(housing_dataset$Price, 0.25) &
+                                       housing_dataset$Price <= quantile(housing_dataset$Price, 0.75), ]
+highpriced_properties <- housing_dataset[housing_dataset$Price > quantile(housing_dataset$Price, 0.75), ]
+```
+
+Let us now examine the summaries of these groups separately.
+
+``` r
+summary(lowpriced_properties)
+```
+
+    ##       Date                     Type          Price           Landsize   
+    ##  Min.   :2016-02-04   House      :3829   Min.   :310000   Min.   :  82  
+    ##  1st Qu.:2017-03-11   Townhouse  : 810   1st Qu.:476000   1st Qu.: 301  
+    ##  Median :2017-08-26   Unit/Duplex:2921   Median :555000   Median : 550  
+    ##  Mean   :2017-07-01                      Mean   :539521   Mean   : 567  
+    ##  3rd Qu.:2017-11-18                      3rd Qu.:615000   3rd Qu.: 673  
+    ##  Max.   :2018-03-17                      Max.   :668400   Max.   :3434  
+    ##                                                                         
+    ##      Rooms          Bathroom          Car           Distance   
+    ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.0  
+    ##  1st Qu.:2.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 8.4  
+    ##  Median :3.000   Median :1.000   Median :1.000   Median :12.9  
+    ##  Mean   :2.592   Mean   :1.328   Mean   :1.497   Mean   :14.3  
+    ##  3rd Qu.:3.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:18.4  
+    ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :48.1  
+    ##                                                                
+    ##                       Regionname   Propertycount 
+    ##  Northern Metropolitan     :2734   21650  : 351  
+    ##  Western Metropolitan      :2010   8870   : 225  
+    ##  Southern Metropolitan     :1413   15510  : 194  
+    ##  Eastern Metropolitan      : 564   13830  : 142  
+    ##  South-Eastern Metropolitan: 515   16166  : 128  
+    ##  Northern Victoria         : 129   14092  : 126  
+    ##  (Other)                   : 195   (Other):6394
+
+When we look at low-priced properties, we see that there are mostly
+House and Unit/Duplex properties. Almost all Unit/Duplex type properties
+are gathered in Low-priced properties. It is still early to predict the
+reason for this, we need to check other data and examine other price
+groups as well. On average, there are 2-3 rooms, 1 bathroom and 1-2 car
+parks. In terms of distance, there are low-priced properties both in the
+center and at the farthest point from the center.
+
+``` r
+summary(midpriced_properties)
+```
+
+    ##       Date                     Type           Price            Landsize     
+    ##  Min.   :2016-01-28   House      :11448   Min.   : 668500   Min.   :  82.0  
+    ##  1st Qu.:2016-12-03   Townhouse  : 1891   1st Qu.: 780000   1st Qu.: 288.0  
+    ##  Median :2017-07-29   Unit/Duplex: 1789   Median : 905000   Median : 535.0  
+    ##  Mean   :2017-06-07                       Mean   : 938406   Mean   : 527.9  
+    ##  3rd Qu.:2017-11-11                       3rd Qu.:1088000   3rd Qu.: 672.0  
+    ##  Max.   :2018-03-17                       Max.   :1320000   Max.   :3414.0  
+    ##                                                                             
+    ##      Rooms          Bathroom          Car           Distance    
+    ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.00  
+    ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 7.20  
+    ##  Median :3.000   Median :1.000   Median :2.000   Median :11.20  
+    ##  Mean   :3.075   Mean   :1.546   Mean   :1.691   Mean   :11.65  
+    ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:14.50  
+    ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :48.10  
+    ##                                                                 
+    ##                       Regionname   Propertycount  
+    ##  Northern Metropolitan     :4331   21650  :  412  
+    ##  Southern Metropolitan     :3762   10969  :  405  
+    ##  Western Metropolitan      :3318   8870   :  349  
+    ##  Eastern Metropolitan      :2562   14577  :  320  
+    ##  South-Eastern Metropolitan: 998   11204  :  262  
+    ##  Eastern Victoria          :  99   11918  :  217  
+    ##  (Other)                   :  58   (Other):13163
+
+When we look at mid-priced houses, we can see that more House type
+properties are in this scale. Although there is not a big difference in
+the number of rooms and bathrooms, we see that the mean is lower than
+the median in the number of parking lots. The reason for this may be
+that the houses in a certain area (for example, apartments in the city
+center) do not have a parking lot. Although the distance will be the
+same, we can say that the properties closer to the center on average are
+located in mid-priced properties.
+
+``` r
+summary(highpriced_properties)
+```
+
+    ##       Date                     Type          Price            Landsize     
+    ##  Min.   :2016-01-28   House      :6966   Min.   :1321000   Min.   :  83.0  
+    ##  1st Qu.:2016-11-19   Townhouse  : 448   1st Qu.:1480000   1st Qu.: 345.0  
+    ##  Median :2017-06-17   Unit/Duplex: 147   Median :1700000   Median : 585.0  
+    ##  Mean   :2017-05-13                      Mean   :1839273   Mean   : 565.1  
+    ##  3rd Qu.:2017-10-28                      3rd Qu.:2065000   3rd Qu.: 707.0  
+    ##  Max.   :2018-03-17                      Max.   :3400000   Max.   :3381.0  
+    ##                                                                            
+    ##      Rooms          Bathroom          Car          Distance     
+    ##  Min.   :1.000   Min.   :1.000   Min.   :0.00   Min.   : 0.000  
+    ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.00   1st Qu.: 5.900  
+    ##  Median :4.000   Median :2.000   Median :2.00   Median : 8.700  
+    ##  Mean   :3.589   Mean   :1.969   Mean   :1.87   Mean   : 9.066  
+    ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:2.00   3rd Qu.:11.400  
+    ##  Max.   :5.000   Max.   :4.000   Max.   :5.00   Max.   :39.000  
+    ##                                                                 
+    ##                       Regionname   Propertycount 
+    ##  Southern Metropolitan     :4485   7809   : 271  
+    ##  Northern Metropolitan     :1167   10412  : 245  
+    ##  Eastern Metropolitan      : 981   10331  : 241  
+    ##  Western Metropolitan      : 778   6938   : 233  
+    ##  South-Eastern Metropolitan: 142   10579  : 226  
+    ##  Eastern Victoria          :   5   8920   : 218  
+    ##  (Other)                   :   3   (Other):6127
+
+When we look at the high-priced properties, we can say that almost all
+of them are House-type houses. When we check the distance value, it is
+possible to say that the closest houses to the center are high-priced
+properties. This might explain why almost all of them are House type.
+When we look at the number of rooms, it is seen that the number of rooms
+and bathrooms is higher than other groups. This, of course, is a factor
+that deeply affects the price.
+
+### 6.5.3 Type vs Price (Boxplot)
+
+To create this plot, we first create our ggplot object as usual. Next,
+we create our boxplot using geom_boxplot(). I wanted to use facet_grid()
+for different types of properties. Different methods can also be used.
+After visual adjustments, our plot is ready.
+
+``` r
+ggplot(data = housing_dataset, aes(x = Price, y = "")) + geom_boxplot() +
+  facet_grid(rows = housing_dataset$Type) +
+  scale_x_continuous(labels = unit_format(unit = "M", scale = 1e-6)) +
+  labs(title = "Prices for Property Types") + labs(y = "")
+```
+
+![](melbourne-housing_files/figure-gfm/unnamed-chunk-87-1.png)<!-- -->
+
+Looking at the table, it shows that House type properties are the most
+expensive on average, but are distributed over a wide range. This data
+is not surprising, as there are many houses in every region, at every
+distance. Townhouse shows a more mid-level pricing, while the
+distribution between prices is lower than House-type properties. We can
+see that Unit/Duplex type properties are generally cheap, but can exceed
+3,000,000 units. This visualizes the review we made in the price
+grouping section.
+
+### 6.5.4 Correlated Values
+
+By using the cor() function for numerical values, we can measure the
+effect of these values on the Price function.
+
+``` r
+round(cor(housing_dataset[, c("Price", "Landsize", "Rooms", "Bathroom", "Car", "Distance")]), 2)[, 1]
+```
+
+    ##    Price Landsize    Rooms Bathroom      Car Distance 
+    ##     1.00     0.03     0.44     0.41     0.16    -0.27
+
+As we can see from the table above, Rooms, Bathroom and Distance
+variables are the 3 numerical variables that affect the Price value the
+most.

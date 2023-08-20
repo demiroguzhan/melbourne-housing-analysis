@@ -226,20 +226,71 @@ summary(housing_dataset)
 
 summary(housing_dataset)
 
-housePercentage <- nrow(housing_dataset[housing_dataset$Type == "House",]) / nrow(housing_dataset)
-udPercentage <- nrow(housing_dataset[housing_dataset$Type == "Unit/Duplex",]) / nrow(housing_dataset)
-townhousePercentage <- nrow(housing_dataset[housing_dataset$Type == "Townhouse",]) / nrow(housing_dataset)
+house_percentage <- nrow(housing_dataset[housing_dataset$Type == "House", ]) / nrow(housing_dataset)
+ud_percentage <- nrow(housing_dataset[housing_dataset$Type == "Unit/Duplex", ]) / nrow(housing_dataset)
+townhouse_percentage <- nrow(housing_dataset[housing_dataset$Type == "Townhouse", ]) / nrow(housing_dataset)
 
-pieSlices <- c(housePercentage, udPercentage, townhousePercentage)
-pieLabels <- c("House", "Unit/Duplex", "Townhouse")
-pieChartData <- data.frame(pieLabels, pieSlices)
+pie_slices <- c(house_percentage, ud_percentage, townhouse_percentage)
+pie_labels <- c("House", "Unit/Duplex", "Townhouse")
+piechart_data <- data.frame(pie_labels, pie_slices)
 
-ggplot(data=pieChartData, aes(x="", y=pieSlices, fill=pieLabels)) +
-  geom_bar(stat="identity", width=1, color="white") +
+ggplot(data = piechart_data, aes(x = "", y = pie_slices, fill = pie_labels)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
   coord_polar("y", start = 0) +
   theme_void() +
   labs(title = "Property Type Distribution") +
-  labs(fill="Types")
+  labs(fill = "Types")
+
+ggplot(data = housing_dataset, aes(y = Regionname, fill = Type)) +
+  geom_bar(position = "fill", width = 0.8) +
+  theme_bw() +
+  labs(title = "Property Distribution per Region") +
+  labs(x = "Percentage") + labs(y = "Region Name")
+
+ggplot(data = housing_dataset, aes(x = Landsize)) +
+  geom_histogram(color = "black", bins = 25, fill = "orange") +
+  theme_classic() +
+  labs(title = "Landsize Histogram") + labs(y = "Count")
+
+ggplot(data = housing_dataset, aes(x = Distance, y = Price)) + geom_point(aes(color = Type), size = 2.5, alpha = 0.05) +
+  facet_grid(rows = housing_dataset$Type) +
+  scale_y_continuous(labels = unit_format(unit = "M", scale = 1e-6)) +
+  geom_smooth(method = "gam", formula = y ~ s(x, bs = "cs")) +
+  theme(legend.position = "none") +
+  labs(title = "Price Distribution in Distance to City Center")
+
+ggplot(data = housing_dataset, aes(x = Price)) +
+  geom_histogram(color = "black", bins = 25, fill = "beige") +
+  geom_vline(xintercept = round(mean(housing_dataset$Price)), color = "cyan3", size = 1) +
+  geom_vline(xintercept = round(median(housing_dataset$Price)), color = "purple", size = 1) +
+  geom_vline(xintercept = round(mean(housing_dataset$Price) + sd(housing_dataset$Price)), color = "darkseagreen4", size = 1) +
+  geom_vline(xintercept = round(mean(housing_dataset$Price) - sd(housing_dataset$Price)), color = "darkseagreen4", size = 1) +
+  annotate(geom = "label", x = round(mean(housing_dataset$Price)), y = 4800, label = paste("ST-Dev: ±", round(sd(housing_dataset$Price))), fill = "darkseagreen4", size = 3.5) +
+  annotate(geom = "label", x = round(mean(housing_dataset$Price)) + 360000, y = 3800, label = paste("Mean:", round(mean(housing_dataset$Price))), fill = "cyan3", size = 3.5) +
+  annotate(geom = "label", x = round(median(housing_dataset$Price)) + 370000, y = 4300, label = paste("Median:", round(median(housing_dataset$Price))), fill = "purple", size = 3.5) +
+  scale_x_continuous(breaks = round(seq(0, 5000000, by = 250000), 1), labels = unit_format(unit = "", scale = 1e-6)) +
+  labs(title = "Price Histogram") + labs(y = "Count") + labs(x = "Price (Million)")
+
+quantile(housing_dataset$Price, 0.25)
+quantile(housing_dataset$Price, 0.75)
+
+lowpriced_properties <- housing_dataset[housing_dataset$Price < quantile(housing_dataset$Price, 0.25), ]
+midpriced_properties <- housing_dataset[housing_dataset$Price >= quantile(housing_dataset$Price, 0.25) &
+                                       housing_dataset$Price <= quantile(housing_dataset$Price, 0.75), ]
+highpriced_properties <- housing_dataset[housing_dataset$Price > quantile(housing_dataset$Price, 0.75), ]
+
+summary(lowpriced_properties)
+
+summary(midpriced_properties)
+
+summary(highpriced_properties)
+
+ggplot(data = housing_dataset, aes(x = Price, y = "")) + geom_boxplot() +
+  facet_grid(rows = housing_dataset$Type) +
+  scale_x_continuous(labels = unit_format(unit = "M", scale = 1e-6)) +
+  labs(title = "Prices for Property Types") + labs(y = "")
+
+round(cor(housing_dataset[, c("Price", "Landsize", "Rooms", "Bathroom", "Car", "Distance")]), 2)[, 1]
 
 knitr::purl(input = "melbourne-housing.Rmd", output = "melbourne-housing-no-doc.R", documentation = 0)
 file.rename(from = "melbourne-housing.md", to = "README.md")

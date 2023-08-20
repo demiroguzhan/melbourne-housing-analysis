@@ -599,7 +599,7 @@ Let's activate the “mice” package and create a “mice” object with 0 iter
 The reason we do 0 iterations is that we don't want to do any action yet, but we want to reach the drafts that will be used
 in the process to be done.
 
-```{r}
+```{r, echo=FALSE}
 library(mice)
 init <- mice(housing_dataset, maxit = 0)
 ```
@@ -690,31 +690,213 @@ Unit/Duplex and Townhouse one by one and define them into a variable.
 Then we will create a pieLabels to use in the colors and the data to be used, and the pieChartData variable to use it as data.
 
 Since ggplot does not support pie chart directly, we will solve this by using a different method at this point.
-Of course, we can use R's own pie chart function, but since we will do other charts via ggplot, I chose to stick with this package.
-For this, we first create a ggplot object. We use the pieChartData we created for the data layer.
+Of course, we can use R's own pie chart function, but since we will do other charts via ggplot, I choose to stick with this package.
+For this, we will first create a ggplot object. We will use the "piechart_data" we created for the data layer.
 
-For the Aesthetic layer, we leave x blank and assign pieSlices to y. We assign the pieLables we created to the “fill” parameter.
-This creates our main ggplot object. Then we create a bar object for the geometry layer.
+For the Aesthetic layer, we will leave x blank and assign "pie_slices" to y. We will assign the "pie_labels" that we created to the “fill” parameter.
+This creates our main ggplot object. Then we will be creating a bar object for the geometry layer.
 
-In order to make this barplot look like a pie chart, we will spread the bars we have around a point by 360 degrees
-by using coord_polar. Then we set the desired naming and colors and our pie chart is ready!
+In order to make barplot look like a pie chart, we will spread the bars we have around a point by 360 degrees
+by using coord_polar. Then we will set the desired naming and colors and our pie chart will be ready!
 
 ```{r}
-housePercentage <- nrow(housing_dataset[housing_dataset$Type == "House",]) / nrow(housing_dataset)
-udPercentage <- nrow(housing_dataset[housing_dataset$Type == "Unit/Duplex",]) / nrow(housing_dataset)
-townhousePercentage <- nrow(housing_dataset[housing_dataset$Type == "Townhouse",]) / nrow(housing_dataset)
+house_percentage <- nrow(housing_dataset[housing_dataset$Type == "House", ]) / nrow(housing_dataset)
+ud_percentage <- nrow(housing_dataset[housing_dataset$Type == "Unit/Duplex", ]) / nrow(housing_dataset)
+townhouse_percentage <- nrow(housing_dataset[housing_dataset$Type == "Townhouse", ]) / nrow(housing_dataset)
 
-pieSlices <- c(housePercentage, udPercentage, townhousePercentage)
-pieLabels <- c("House", "Unit/Duplex", "Townhouse")
-pieChartData <- data.frame(pieLabels, pieSlices)
+pie_slices <- c(house_percentage, ud_percentage, townhouse_percentage)
+pie_labels <- c("House", "Unit/Duplex", "Townhouse")
+piechart_data <- data.frame(pie_labels, pie_slices)
 
-ggplot(data=pieChartData, aes(x="", y=pieSlices, fill=pieLabels)) +
-  geom_bar(stat="identity", width=1, color="white") +
+ggplot(data = piechart_data, aes(x = "", y = pie_slices, fill = pie_labels)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
   coord_polar("y", start = 0) +
   theme_void() +
   labs(title = "Property Type Distribution") +
-  labs(fill="Types")
+  labs(fill = "Types")
 ```
+
+## Property Distribution per Region (Bar Chart)
+
+We do not need to do any pre-processing while creating a bar chart. So we will start directly with the ggplot object.
+
+We will assign our data to the data layer, the “Regionname” column to the y coordinate of the aesthetic layer,
+and the “Type” column to the fill parameter for coloring.
+
+Then we will create our bar chart with the geom_bar() function and define the position parameter as “fill”.
+This is because in some areas there are almost no Townhouses and Units/Duplexes, so the “fill” position will make them look more readable.
+However, it uses percentage instead of count while doing this.
+
+Finally we will set the width to 0.8 purely for display purposes. After the desired theme and naming, our bar chart will be ready.
+
+```{r}
+ggplot(data = housing_dataset, aes(y = Regionname, fill = Type)) +
+  geom_bar(position = "fill", width = 0.8) +
+  theme_bw() +
+  labs(title = "Property Distribution per Region") +
+  labs(x = "Percentage") + labs(y = "Region Name")
+```
+
+## Landsize Distribution (Histogram)
+
+Creating a histogram is easier than others. We will create our ggplot object with our data and aesthetic values,
+and then we will add the histogram geometry to this object with the geom_histogram() function.
+
+It is important to set the number of bins correctly. Too high bin number will seem visually crowded, and
+too low may create a deficiency in the information it offers.
+We will set it to 25, thinking 25 will be appropriate.
+
+All other layers and parameters other than this are used for visual purposes. In short, our histogram is ready.
+
+```{r}
+ggplot(data = housing_dataset, aes(x = Landsize)) +
+  geom_histogram(color = "black", bins = 25, fill = "orange") +
+  theme_classic() +
+  labs(title = "Landsize Histogram") + labs(y = "Count")
+```
+
+## Price vs Distance per Type(Scatter Plot)
+
+Instead of using the scatter plot alone, we can make a better presentation by using facets and geom_smooth().
+So, first we will create our ggplot object and then we will be createting our scatter plot using geom_point().
+
+At this point, the reason we lowered the alpha to 5% is to manage to visualize the clutter on the chart.
+Because we are using a lower alpha, the places with agglomeration will appear with a brighter color,
+while as the agglomeration decreases, we will see a dimmer color.
+
+We will use the facet_grid() function to present different property types. As we've used it before,
+we will be using the “scales” package to get smoother numbers, and instead of using 1e-16 to represent million,
+we will make the letter “M” appear. After adding our trend line to the scatter plot using geom_smooth(),
+we will make our final visual adjustments. Scatter plot ready!
+
+```{r}
+ggplot(data = housing_dataset, aes(x = Distance, y = Price)) + geom_point(aes(color = Type), size = 2.5, alpha = 0.05) +
+  facet_grid(rows = housing_dataset$Type) +
+  scale_y_continuous(labels = unit_format(unit = "M", scale = 1e-6)) +
+  geom_smooth(method = "gam", formula = y ~ s(x, bs = "cs")) +
+  theme(legend.position = "none") +
+  labs(title = "Price Distribution in Distance to City Center")
+```
+
+## Price Analysis
+
+### Histogram
+
+As always when creating this histogram, after creating the ggplot object, we will be creating our histogram via geom_histogram().
+Using geom_vline() and annotate(), we will place mean, median and standard deviation values in our histogram.
+
+After the desired naming and coloring, we see a table like this:
+
+```{r}
+ggplot(data = housing_dataset, aes(x = Price)) +
+  geom_histogram(color = "black", bins = 25, fill = "beige") +
+  geom_vline(xintercept = round(mean(housing_dataset$Price)), color = "cyan3", size = 1) +
+  geom_vline(xintercept = round(median(housing_dataset$Price)), color = "purple", size = 1) +
+  geom_vline(xintercept = round(mean(housing_dataset$Price) + sd(housing_dataset$Price)), color = "darkseagreen4", size = 1) +
+  geom_vline(xintercept = round(mean(housing_dataset$Price) - sd(housing_dataset$Price)), color = "darkseagreen4", size = 1) +
+  annotate(geom = "label", x = round(mean(housing_dataset$Price)), y = 4800, label = paste("ST-Dev: ±", round(sd(housing_dataset$Price))), fill = "darkseagreen4", size = 3.5) +
+  annotate(geom = "label", x = round(mean(housing_dataset$Price)) + 360000, y = 3800, label = paste("Mean:", round(mean(housing_dataset$Price))), fill = "cyan3", size = 3.5) +
+  annotate(geom = "label", x = round(median(housing_dataset$Price)) + 370000, y = 4300, label = paste("Median:", round(median(housing_dataset$Price))), fill = "purple", size = 3.5) +
+  scale_x_continuous(breaks = round(seq(0, 5000000, by = 250000), 1), labels = unit_format(unit = "", scale = 1e-6)) +
+  labs(title = "Price Histogram") + labs(y = "Count") + labs(x = "Price (Million)")
+```
+
+When we look at our table, we can see why the median value is sometimes preferred more than the mean value.
+In this right-skewed (positive skeweness) histogram, we can see that although the density is on the left side,
+the low-frequency but high-value properties on the right side increase the mean value.
+
+If we examine our table, we can argue that the properties in our dataset are mostly valued between 500,000 and 1,000,000 units.
+When we look at the standard deviation value, choosing properties that we can evaluate between 500,000 and 1,600,000 units for
+future property constructions will secure our sales in the coming years. Since the sales of the houses outside this range are very few,
+the sales process will be much longer, which may cause disruption in our future planning. Of course, before making this decision,
+the expense spent on these properties should also be considered, but the data we have does not cover this.
+By doing a detailed research on Melbourne and Australia, we can find out how the property prices in Melbourne compare to the
+rest of the country, and inferences can be made about the average income status of people in the continuation of this research.
+
+### Grouping Properties by Price
+
+For this grouping, instead of choosing random values, we will be using the 1st and 3rd quantile data.
+We will be defining properties with a price less than 1st quantile as low-priced houses, properties with a higher than 3rd quantile
+as high-priced houses, and properties between these two values as medium-priced houses.
+
+For this, first of all, let's check the 25% and 75% values, which we call 1st and 3rd quantile, using the quantile function.
+
+```{r}
+quantile(housing_dataset$Price, 0.25)
+quantile(housing_dataset$Price, 0.75)
+```
+
+Then let's use this data as a filter and define new variables.
+
+```{r}
+lowpriced_properties <- housing_dataset[housing_dataset$Price < quantile(housing_dataset$Price, 0.25), ]
+midpriced_properties <- housing_dataset[housing_dataset$Price >= quantile(housing_dataset$Price, 0.25) &
+                                       housing_dataset$Price <= quantile(housing_dataset$Price, 0.75), ]
+highpriced_properties <- housing_dataset[housing_dataset$Price > quantile(housing_dataset$Price, 0.75), ]
+```
+
+Let us now examine the summaries of these groups separately.
+
+```{r}
+summary(lowpriced_properties)
+```
+
+When we look at low-priced properties, we see that there are mostly House and Unit/Duplex properties.
+Almost all Unit/Duplex type properties are gathered in Low-priced properties. It is still early to predict the reason for this,
+we need to check other data and examine other price groups as well. On average, there are 2-3 rooms, 1 bathroom and 1-2 car parks.
+In terms of distance, there are low-priced properties both in the center and at the farthest point from the center.
+
+```{r}
+summary(midpriced_properties)
+```
+
+When we look at mid-priced houses, we can see that more House type properties are in this scale. Although there is
+not a big difference in the number of rooms and bathrooms, we see that the mean is lower than the median in the number of parking lots.
+The reason for this may be that the houses in a certain area (for example, apartments in the city center) do not have a parking lot.
+Although the distance will be the same, we can say that the properties closer to the center on average are located in mid-priced properties.
+
+```{r}
+summary(highpriced_properties)
+```
+
+When we look at the high-priced properties, we can say that almost all of them are House-type houses.
+When we check the distance value, it is possible to say that the closest houses to the center are high-priced properties.
+This might explain why almost all of them are House type. When we look at the number of rooms, it is seen that the number of rooms
+and bathrooms is higher than other groups. This, of course, is a factor that deeply affects the price.
+
+### Type vs Price (Boxplot)
+
+To create this plot, we first create our ggplot object as usual. Next, we create our boxplot using geom_boxplot().
+I wanted to use facet_grid() for different types of properties. Different methods can also be used.
+After visual adjustments, our plot is ready.
+
+```{r}
+ggplot(data = housing_dataset, aes(x = Price, y = "")) + geom_boxplot() +
+  facet_grid(rows = housing_dataset$Type) +
+  scale_x_continuous(labels = unit_format(unit = "M", scale = 1e-6)) +
+  labs(title = "Prices for Property Types") + labs(y = "")
+```
+
+Looking at the table, it shows that House type properties are the most expensive on average, but are distributed over a wide range.
+This data is not surprising, as there are many houses in every region, at every distance.
+Townhouse shows a more mid-level pricing, while the distribution between prices is lower than House-type properties.
+We can see that Unit/Duplex type properties are generally cheap, but can exceed 3,000,000 units.
+This visualizes the review we made in the price grouping section.
+
+### Correlated Values
+
+By using the cor() function for numerical values, we can measure the effect of these values on the Price function.
+
+```{r}
+round(cor(housing_dataset[, c("Price", "Landsize", "Rooms", "Bathroom", "Car", "Distance")]), 2)[, 1]
+```
+
+As we can see from the table above, most of the numerical values in our table affects the Price significantly.
+
+And with this, we've completed our analysis on Melbourne Housing dataset. There might some updates in future to improve our approaches, add
+more detailed analysis and so on. This project was made with the aim of bringing together hands-on experiences.
+Although less effective methods were used in order to avoid the project's purpose at some points, the project achieved its purpose.
+I hope this hands-on analysis report has helped you learn something about R, too.
 
 
 ```{r, include=FALSE, message=FALSE}
