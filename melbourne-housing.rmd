@@ -8,10 +8,10 @@ output:
 
 # Importing Dataset / Pre-analysis
 
-We are importing our data set to studio and we save a backup version to save original data on studio.
+We are importing our dataset, using "read.csv" fuction.
 I decided to use strings as non-factor objects because i will set all the variables by myself after doing some analysis on data.
 Since we have some cells with “#N/A” text in it, R doesn't see them as NA values.
-To avoid them, we are using na.strings parameter to import them as NA's.
+To avoid them, we are using "na.strings: parameter to import them as NA's.
 
 ```{r}
 housing_dataset <- read.csv("melbourne_data.csv",
@@ -19,16 +19,15 @@ housing_dataset <- read.csv("melbourne_data.csv",
 ```
 
 Before doing any cleaning and altering, we are checking structure and summary of the data to have some understanding about
- our data that we will analyze.
-
+our data that we will analyze.
 
 ```{r}
 str(housing_dataset)
 ```
 
-When we check the structure of our data set, we can see there is a column named X which is not necessary since we already have
+When we check the structure of our data set, we can see there is a column named "X" which is not necessary since we already have
 built in numbering system in R. We have lots of columns which has “chr” type which looks incorrect.
-Since they are character, it won't be healthy to check summary of the dataset now. So we will work with our column types now.
+Since they are character, it won't be healthy to check summary of the dataset now. So we will work with our column types first.
 
 # Preparing Columns for Analysis
 
@@ -78,7 +77,7 @@ summary(housing_dataset$Type)
 
 We are formatting “Price” column to integer since we don't have any double values in Price column.
 Then, we are checking the structure, summary and NA values in the “Price” column.
-We have 7610 missing values on “Price” column.
+We have 7610 missing values on “Price” column, we will work on them later.
 
 ```{r, warning=FALSE}
 housing_dataset$Price <- as.integer(housing_dataset$Price)
@@ -91,8 +90,8 @@ summary(housing_dataset$Price)
 
 ## Landsize and BuildingArea Columns
 
-We are formatting “Landsize” and “BuildingArea” columns to integer since we don't have any double values in them
-and they are sharing the same structures.
+We are formatting “Landsize” and “BuildingArea” columns to integer since they are sharing the same structure and
+we don't have any double values in them.
 Then, we are checking the structure, summary and NA values in those columns.
 We have 11810 missing values on “Landsize” and 21115 missing values on “BuildingArea” column according to summary of the column.
 
@@ -114,7 +113,7 @@ summary(housing_dataset$BuildingArea)
 
 ## Rooms, Bathroom, Car Columns
 
-We will apply the same approach to “Rooms”, “Bathroom” and “Car” columns since they are identical in terms of data.
+We will apply the same approach to “Rooms”, “Bathroom” and “Car” columns since they have identical structure in terms of data.
 First of all, we will format them to integer and then we will check their structures and summaries one by one.
 Fortunately, we have no NA values in “Rooms” column but we have 8226 missing values in “Bathroom” and 8728 missing values in “Car” column.
 
@@ -140,9 +139,10 @@ summary(housing_dataset$Car)
 ```
 
 ## YearBuilt Column
+
 We will format “YearBuilt” column to integer.
 It will help us while dealing with outliers in the column. 
-Since we don't have any month and day information in this column, date type won't fit to it.
+Since we don't have any month and day information in this column, we don't need to use it as Date object.
 After formatting, we are checking the structure and summary of this column.
 We have 19306 missing values in this column.
 
@@ -205,9 +205,10 @@ str(housing_dataset$Propertycount)
 summary(housing_dataset$Propertycount)
 ```
 
-# Dealing With Missing Values
+# Replacing Missing Values
 
 First, let's have a look the data we have obtained during the pre-process.
+
 Date Column: 0 missing rows
 Type Column: 0 missing rows
 Price Column: 7610 missing rows
@@ -268,7 +269,8 @@ If we examine the property area where the properties are located in that region 
 we can find where these properties belong.
 
 ```{r}
-summary(housing_dataset$Propertycount[housing_dataset$Distance == 5.1 & housing_dataset$Regionname == "Western Metropolitan"])
+summary(housing_dataset$Propertycount[housing_dataset$Distance == 5.1 &
+                                      housing_dataset$Regionname == "Western Metropolitan"])
 ```
 
 When we look at the table above, we can say that this property is more likely to be located in the area with 7570 properties.
@@ -279,11 +281,15 @@ housing_dataset[18524, "Price"]
 ```
 
 ```{r}
-summary(housing_dataset$Price[housing_dataset$Distance == 5.1 & housing_dataset$Regionname == "Western Metropolitan" & housing_dataset$Propertycount == 7570])
+summary(housing_dataset$Price[housing_dataset$Distance == 5.1 &
+                              housing_dataset$Regionname == "Western Metropolitan" &
+                              housing_dataset$Propertycount == 7570])
 ```
 
 ```{r}
-summary(housing_dataset$Price[housing_dataset$Distance == 5.1 & housing_dataset$Regionname == "Western Metropolitan" & housing_dataset$Propertycount == 2417])
+summary(housing_dataset$Price[housing_dataset$Distance == 5.1 &
+                              housing_dataset$Regionname == "Western Metropolitan" &
+                              housing_dataset$Propertycount == 2417])
 ```
 
 The value of this property is defined as 710.000 units.
@@ -297,7 +303,8 @@ housing_dataset[18524, "Propertycount"] <- 7570
 Now let's do the same approach for the second row.
 
 ```{r}
-summary(housing_dataset$Propertycount[housing_dataset$Distance == 7.7 & housing_dataset$Regionname == "Southern Metropolitan"])
+summary(housing_dataset$Propertycount[housing_dataset$Distance == 7.7 &
+                                      housing_dataset$Regionname == "Southern Metropolitan"])
 ```
 
 It is very difficult to make a prediction based on the above table. 
@@ -309,11 +316,15 @@ housing_dataset[26889, "Price"]
 ```
 
 ```{r}
-summary(housing_dataset$Price[housing_dataset$Distance == 7.7 & housing_dataset$Regionname == "Southern Metropolitan" & housing_dataset$Propertycount == 8920])
+summary(housing_dataset$Price[housing_dataset$Distance == 7.7 &
+                              housing_dataset$Regionname == "Southern Metropolitan" &
+                              housing_dataset$Propertycount == 8920])
 ```
 
 ```{r}
-summary(housing_dataset$Price[housing_dataset$Distance == 7.7 & housing_dataset$Regionname == "Southern Metropolitan" & housing_dataset$Propertycount == 8989])
+summary(housing_dataset$Price[housing_dataset$Distance == 7.7 &
+                              housing_dataset$Regionname == "Southern Metropolitan" &
+                              housing_dataset$Propertycount == 8989])
 ```
 
 The value of our second property is defined as 825.000 units.
