@@ -224,5 +224,22 @@ housing_dataset$BuildingArea <- NULL
 housing_dataset$YearBuilt <- NULL
 summary(housing_dataset)
 
+summary(housing_dataset)
+
+housePercentage <- nrow(housing_dataset[housing_dataset$Type == "House",]) / nrow(housing_dataset)
+udPercentage <- nrow(housing_dataset[housing_dataset$Type == "Unit/Duplex",]) / nrow(housing_dataset)
+townhousePercentage <- nrow(housing_dataset[housing_dataset$Type == "Townhouse",]) / nrow(housing_dataset)
+
+pieSlices <- c(housePercentage, udPercentage, townhousePercentage)
+pieLabels <- c("House", "Unit/Duplex", "Townhouse")
+pieChartData <- data.frame(pieLabels, pieSlices)
+
+ggplot(data=pieChartData, aes(x="", y=pieSlices, fill=pieLabels)) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start = 0) +
+  theme_void() +
+  labs(title = "Property Type Distribution") +
+  labs(fill="Types")
+
 knitr::purl(input = "melbourne-housing.Rmd", output = "melbourne-housing-no-doc.R", documentation = 0)
 file.rename(from = "melbourne-housing.md", to = "README.md")

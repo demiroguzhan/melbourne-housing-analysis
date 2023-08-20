@@ -27,23 +27,26 @@ Melbourne Housing
   - [4.7 YearBuilt Column Outliers](#47-yearbuilt-column-outliers)
 - [5 Replacing Missing Values Using “mice”
   Package](#5-replacing-missing-values-using-mice-package)
+- [6 Analysis & Visualization](#6-analysis--visualization)
+  - [6.1 Property Type Distribution (Pie
+    Chart)](#61-property-type-distribution-pie-chart)
 
 # 1 Importing Dataset / Pre-analysis
 
-We are importing our dataset, using “read.csv” fuction. I decided to use
-strings as non-factor objects because i will set all the variables by
-myself after doing some analysis on data. Since we have some cells with
-“\#N/A” text in it, R doesn’t see them as NA values. To avoid them, we
-are using “na.strings: parameter to import them as NA’s.
+We are importing our dataset by using “read.csv” fuction. I decided to
+use strings as non-factor objects because I will set all the variables
+by myself after doing some analysis on data. Since we have some cells
+with “\#N/A” text in it (according the info we got by analysing our
+dataset externally), R doesn’t see them as NA values. To avoid them, we
+will be using “na.strings” parameter to import them as NA’s.
 
 ``` r
 housing_dataset <- read.csv("melbourne_data.csv",
                             stringsAsFactors = FALSE, na.strings = "#N/A")
 ```
 
-Before doing any cleaning and altering, we are checking structure and
-summary of the data to have some understanding about our data that we
-will analyze.
+Before doing any cleaning and altering on dataset, we will be checking
+structure and summary of the dataset to have some idea about it.
 
 ``` r
 str(housing_dataset)
@@ -64,19 +67,18 @@ str(housing_dataset)
     ##  $ Regionname   : chr  "Northern Metropolitan" "Northern Metropolitan" "Northern Metropolitan" "Northern Metropolitan" ...
     ##  $ Propertycount: int  4019 4019 4019 4019 4019 4019 4019 4019 4019 4019 ...
 
-When we check the structure of our data set, we can see there is a
-column named “X” which is not necessary since we already have built in
-numbering system in R. We have lots of columns which has “chr” type
-which looks incorrect. Since they are character, it won’t be healthy to
-check summary of the dataset now. So we will work with our column types
-first.
+When we check the structure of our dataset, we can see there is a column
+named “X” which is unnecessary since we already have built in numbering
+system in R. We have lots of columns which is “chr” type and it looks
+incorrect. Since they are character, it won’t be healthy to check
+summary of the dataset now. So we will work with our column types first.
 
 # 2 Preparing Columns for Analysis
 
 ## 2.1 X Column
 
-As we mentioned above we won’t use column X. According to that, we are
-removing that column from our dataset for further analysis.
+As we mentioned above we won’t use column X. According to that, we will
+be removing that column from our dataset for further analysis.
 
 ``` r
 housing_dataset$X <- NULL
@@ -107,10 +109,12 @@ summary(housing_dataset$Date)
 
 ## 2.3 Type Column
 
-We are renaming strings for better explanation and factorizing those
-values. Then, checking levels of created factor to be sure everything is
-alright. Looking into the new structure and summary to check everything
-looks like as what we wanted. We had no NA values in “Type” column too.
+We will be renaming strings for better explanation and factorizing those
+values. Then we will check levels of created factor to ensure everything
+is alright. After factorising, we will be looking into the new structure
+and summary to ensure everything looks like as what we wanted. By
+checking our summary report, we can see that we have no NA values in
+“Type” column too.
 
 ``` r
 housing_dataset$Type[housing_dataset$Type == "h"] <- "House"
@@ -140,10 +144,10 @@ summary(housing_dataset$Type)
 
 ## 2.4 Price Column
 
-We are formatting “Price” column to integer since we don’t have any
-double values in Price column. Then, we are checking the structure,
-summary and NA values in the “Price” column. We have 7610 missing values
-on “Price” column, we will work on them later.
+We will be formatting “Price” column to integer since we don’t have any
+double values in Price column. Then we will be checking the structure,
+summary in the “Price” column. According to summary we got, we have 7610
+missing values on “Price” column which we will work on them later.
 
 ``` r
 housing_dataset$Price <- as.integer(housing_dataset$Price)
@@ -164,12 +168,11 @@ summary(housing_dataset$Price)
 
 ## 2.5 Landsize and BuildingArea Columns
 
-We are formatting “Landsize” and “BuildingArea” columns to integer since
-they are sharing the same structure and we don’t have any double values
-in them. Then, we are checking the structure, summary and NA values in
-those columns. We have 11810 missing values on “Landsize” and 21115
-missing values on “BuildingArea” column according to summary of the
-column.
+We will be formatting “Landsize” and “BuildingArea” columns to integer
+since they are sharing the same structure and we don’t have any double
+values in them. Then, we will check the structure, summary and extract
+NA values by reading summary report. We have 11810 missing values on
+“Landsize” and 21115 missing values on “BuildingArea” column.
 
 ``` r
 housing_dataset$Landsize <- as.integer(housing_dataset$Landsize)
@@ -204,12 +207,12 @@ summary(housing_dataset$BuildingArea)
 
 ## 2.6 Rooms, Bathroom, Car Columns
 
-We will apply the same approach to “Rooms”, “Bathroom” and “Car” columns
-since they have identical structure in terms of data. First of all, we
-will format them to integer and then we will check their structures and
-summaries one by one. Fortunately, we have no NA values in “Rooms”
-column but we have 8226 missing values in “Bathroom” and 8728 missing
-values in “Car” column.
+We will apply the same approach to “Rooms”, “Bathroom”, and “Car”
+columns since they have identical structure in terms of data. First of
+all, we will format them to integer and then we will be checking their
+structures and summaries one by one. Fortunately, we have no NA values
+in “Rooms” column but we have 8226 missing values in “Bathroom” and 8728
+missing values in “Car” column.
 
 ``` r
 housing_dataset$Rooms <- as.integer(housing_dataset$Rooms)
@@ -258,11 +261,11 @@ summary(housing_dataset$Car)
 
 ## 2.7 YearBuilt Column
 
-We will format “YearBuilt” column to integer. It will help us while
-dealing with outliers in the column. Since we don’t have any month and
-day information in this column, we don’t need to use it as Date object.
-After formatting, we are checking the structure and summary of this
-column. We have 19306 missing values in this column.
+We will format “YearBuilt” column to integer. Since we don’t have any
+month and day information in this column, we don’t need to use it as
+Date object. After formatting, we will be checking the structure and
+summary of this column. As we can see from summary report below, we have
+19306 missing values in this column.
 
 ``` r
 housing_dataset$YearBuilt <- as.integer(housing_dataset$YearBuilt)
@@ -306,9 +309,10 @@ summary(housing_dataset$Distance)
 
 ## 2.9 Regionname Column
 
-We are factorizing the “Regionname” column and checking its levels.
-Then, we look into structure and summary of it to be sure everything is
-correct. We have 3 cells missing in “Regionname” column.
+We will be factorizing the “Regionname” column and checking its levels
+after. Then, we will look into structure and summary of it to be sure
+everything is correct. According to summary, we have 3 cells missing in
+“Regionname” column.
 
 ``` r
 housing_dataset$Regionname <- factor(housing_dataset$Regionname)
@@ -352,7 +356,8 @@ areas in different regions which has exactly the same amount of
 properties. So, they show us “which” property area that property belongs
 to. According to that, we will use that variable as factor, instead of
 integer. Then we are checking its structure and summary. We have 3
-missing rows in “PropertyCount” column, same as “Regionname”
+missing rows in “PropertyCount” column, same as “Regionname” according
+to summaries we got.
 
 ``` r
 housing_dataset$Propertycount <- factor(housing_dataset$Propertycount)
@@ -411,7 +416,12 @@ missing rows Propertycount Column: 3 missing rows
 
 When we look at the table above, we can see that the Distance,
 Regionname and Propertycount columns have very little missing data.
-Starting from this data will be the easiest step at this point.
+Starting from this data will be the easiest step for us since they won’t
+require any prediction. It would be more effective to use prediction
+since there are only 3 missing rows and rest of the data could be used
+for training our model. However, the purpose of the project is trying to
+apply different approaches and hands-on experiences as much as possible
+so we will stick with manual analysis.
 
 ``` r
 housing_dataset[is.na(housing_dataset$Distance), ]
@@ -476,13 +486,16 @@ When we perform some mathematical operations on the above data, we
 obtain the Regionname value of the first row can be Western Metropolitan
 with a probability of 69.1%, or Southern Metropolitan with a probability
 of 30.9%. Accordingly, instead of deleting this data, we can add it to
-the analysis by restoring it.
+the analysis by restoring it. Using prediction models could be more
+accurate with this type of probability since we could include more
+informations into calculation.
 
 ``` r
 housing_dataset[18524, "Regionname"] <- "Western Metropolitan"
 ```
 
-Now let’s do the same steps for second line.
+Now let’s do the same steps for second line and see if we can get any
+better probability.
 
 ``` r
 summary(housing_dataset$Regionname[housing_dataset$Distance == 7.7])
@@ -499,7 +512,7 @@ summary(housing_dataset$Regionname[housing_dataset$Distance == 7.7])
     ##                       NA's 
     ##                          2
 
-When we do the same operations for the second line, we get the Southern
+When we do the same operations on the second line, we get the Southern
 Metropolitan value with a probability of 91.9% and a Western
 Metropolitan value with a probability of 8.1%. Based on this
 information, we can assume the Regionname of second line to be Southern
@@ -542,7 +555,7 @@ summary(housing_dataset$Propertycount[housing_dataset$Distance == 5.1 &
 
 When we look at the table above, we can say that this property is more
 likely to be located in the area with 7570 properties. However, it is
-also useful to compare the price.
+also useful to bring the “price” value into consideration.
 
 ``` r
 housing_dataset[18524, "Price"]
@@ -568,11 +581,11 @@ summary(housing_dataset$Price[housing_dataset$Distance == 5.1 &
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
     ##  322500  853000  985000 1003046 1129250 1870000       9
 
-The value of this property is defined as 710.000 units. When we look at
+The value of this property is defined as 710.000 units and if we look at
 the mean and median price values in two different fields, the arrows
 again shows the field with 7570 properties. With this information, we
-edit the Propertycount of this property as 7570 and include it in our
-analysis.
+edit the “Propertycount” of this property as “7570” and include it in
+our analysis.
 
 ``` r
 housing_dataset[18524, "Propertycount"] <- 7570
@@ -608,7 +621,7 @@ summary(housing_dataset$Propertycount[housing_dataset$Distance == 7.7 &
 
 It is very difficult to make a prediction based on the above table.
 There are almost equal number of properties in 2 different regions.
-Therefore, we will make a prediction based on the price values.
+Therefore, we will try to predict it based on the price values.
 
 ``` r
 housing_dataset[26889, "Price"]
@@ -637,7 +650,7 @@ summary(housing_dataset$Price[housing_dataset$Distance == 7.7 &
 The value of our second property is defined as 825.000 units. When we
 look at the mean and median values in two different area, we can easily
 say that this property belongs to the second area. Therefore, we change
-the “Propertycount” data of this property to 8989.
+the “Propertycount” data of this property to “8989”.
 
 ``` r
 housing_dataset[26889, "Propertycount"] <- 8989
@@ -766,12 +779,14 @@ According to plot we got, we can see there are prices goes up to 5
 million in the plot, so we can say that 3.400.550 is an acceptable value
 for price. According to that information, we can exclude data below 1%
 and above 99% from our analysis. Since we do not want to get rid of
-missing values yet, we include missing values in our filter via OR
+missing values yet, we include missing values in our filter by using OR
 operator.
 
 ``` r
-housing_dataset <- housing_dataset[(housing_dataset$Price <= quantile(housing_dataset$Price, 0.99, na.rm = TRUE) | is.na(housing_dataset$Price)), ]
-housing_dataset <- housing_dataset[(housing_dataset$Price >= quantile(housing_dataset$Price, 0.01, na.rm = TRUE) | is.na(housing_dataset$Price)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Price <= quantile(housing_dataset$Price, 0.99, na.rm = TRUE) |
+                                    is.na(housing_dataset$Price)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Price >= quantile(housing_dataset$Price, 0.01, na.rm = TRUE) |
+                                    is.na(housing_dataset$Price)), ]
 ```
 
 ## 4.2 Landsize Column Outliers
@@ -833,13 +848,15 @@ percentile which is acceptable. Now we can apply the same method that we
 were using to “Landsize” column.
 
 ``` r
-housing_dataset <- housing_dataset[(housing_dataset$Landsize < quantile(housing_dataset$Landsize, 0.99, na.rm = TRUE) | is.na(housing_dataset$Landsize)), ]
-housing_dataset <- housing_dataset[(housing_dataset$Landsize > quantile(housing_dataset$Landsize, 0.01, na.rm = TRUE) | is.na(housing_dataset$Landsize)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Landsize < quantile(housing_dataset$Landsize, 0.99, na.rm = TRUE) |
+                                    is.na(housing_dataset$Landsize)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Landsize > quantile(housing_dataset$Landsize, 0.01, na.rm = TRUE) |
+                                    is.na(housing_dataset$Landsize)), ]
 ```
 
 ## 4.3 BuildingArea Column Outliers
 
-As always, we are starting by checking percentile values.
+As always, we will be starting with checking percentile values.
 
 ``` r
 quantile(housing_dataset$BuildingArea, 0.99, na.rm = TRUE)
@@ -907,16 +924,20 @@ Now, we got 43.14 as lower value and 488.72 as upper value which is
 acceptable. Now we can apply our method on BuildingArea column.
 
 ``` r
-housing_dataset <- housing_dataset[(housing_dataset$BuildingArea < quantile(housing_dataset$BuildingArea, 0.99, na.rm = TRUE) | is.na(housing_dataset$BuildingArea)), ]
-housing_dataset <- housing_dataset[(housing_dataset$BuildingArea > quantile(housing_dataset$BuildingArea, 0.01, na.rm = TRUE) | is.na(housing_dataset$BuildingArea)), ]
+housing_dataset <- housing_dataset[(housing_dataset$BuildingArea < quantile(housing_dataset$BuildingArea, 0.99, na.rm = TRUE) |
+                                    is.na(housing_dataset$BuildingArea)), ]
+housing_dataset <- housing_dataset[(housing_dataset$BuildingArea > quantile(housing_dataset$BuildingArea, 0.01, na.rm = TRUE) |
+                                    is.na(housing_dataset$BuildingArea)), ]
 ```
 
-We detected some rows while checking our data frame which has bigger
+While checking our dataset, I detected some rows which has bigger
 building areas than landsizes which is unrealistic. So, we will exclude
 those rows aswell.
 
 ``` r
-housing_dataset <- housing_dataset[housing_dataset$BuildingArea < housing_dataset$Landsize | is.na(housing_dataset$BuildingArea) | is.na(housing_dataset$Landsize), ]
+housing_dataset <- housing_dataset[housing_dataset$BuildingArea < housing_dataset$Landsize |
+                                  is.na(housing_dataset$BuildingArea) |
+                                  is.na(housing_dataset$Landsize), ]
 ```
 
 ## 4.4 Rooms Column Outliers
@@ -949,7 +970,7 @@ housing_dataset <- housing_dataset[housing_dataset$Rooms >= quantile(housing_dat
 
 ## 4.5 Bathroom Column Outliers
 
-Again, we look at quantile values first.
+Once again, we look at quantile values first.
 
 ``` r
 quantile(housing_dataset$Bathroom, 0.99, na.rm = TRUE)
@@ -997,8 +1018,10 @@ percentile. It’s acceptable because some houses may not have car parks.
 According to that we will apply the same approach to “Car” column.
 
 ``` r
-housing_dataset <- housing_dataset[(housing_dataset$Car <= quantile(housing_dataset$Car, 0.99, na.rm = TRUE) | is.na(housing_dataset$Car)), ]
-housing_dataset <- housing_dataset[(housing_dataset$Car >= quantile(housing_dataset$Car, 0.01, na.rm = TRUE) | is.na(housing_dataset$Car)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Car <= quantile(housing_dataset$Car, 0.99, na.rm = TRUE) |
+                                  is.na(housing_dataset$Car)), ]
+housing_dataset <- housing_dataset[(housing_dataset$Car >= quantile(housing_dataset$Car, 0.01, na.rm = TRUE) |
+                                  is.na(housing_dataset$Car)), ]
 ```
 
 ## 4.7 YearBuilt Column Outliers
@@ -1019,12 +1042,14 @@ quantile(housing_dataset$YearBuilt, 0.01, na.rm = TRUE)
     ##   1% 
     ## 1880
 
-We are applying same method to YearBuilt column because we get
+We will be applying same method to YearBuilt column because we get
 meaningful quantile results like 1880 to 2016.
 
 ``` r
-housing_dataset <- housing_dataset[(housing_dataset$YearBuilt <= quantile(housing_dataset$YearBuilt, 0.99, na.rm = TRUE) | is.na(housing_dataset$YearBuilt)), ]
-housing_dataset <- housing_dataset[(housing_dataset$YearBuilt >= quantile(housing_dataset$YearBuilt, 0.01, na.rm = TRUE) | is.na(housing_dataset$YearBuilt)), ]
+housing_dataset <- housing_dataset[(housing_dataset$YearBuilt <= quantile(housing_dataset$YearBuilt, 0.99, na.rm = TRUE) |
+                                  is.na(housing_dataset$YearBuilt)), ]
+housing_dataset <- housing_dataset[(housing_dataset$YearBuilt >= quantile(housing_dataset$YearBuilt, 0.01, na.rm = TRUE) |
+                                  is.na(housing_dataset$YearBuilt)), ]
 ```
 
 Before we end this section, let’s look at the summary of our data again
@@ -1229,10 +1254,10 @@ summary(housing_dataset)
 
     ##       Date                     Type           Price            Landsize     
     ##  Min.   :2016-01-28   House      :22243   Min.   : 310000   Min.   :  82.0  
-    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 670000   1st Qu.: 300.0  
-    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 913000   Median : 556.0  
-    ##  Mean   :2017-06-07                       Mean   :1065931   Mean   : 561.3  
-    ##  3rd Qu.:2017-11-11                       3rd Qu.:1325000   3rd Qu.: 696.0  
+    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 675000   1st Qu.: 302.0  
+    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 910000   Median : 552.0  
+    ##  Mean   :2017-06-07                       Mean   :1065101   Mean   : 558.1  
+    ##  3rd Qu.:2017-11-11                       3rd Qu.:1320000   3rd Qu.: 691.0  
     ##  Max.   :2018-03-17                       Max.   :3400000   Max.   :3434.0  
     ##                                                                             
     ##      Rooms          Bathroom          Car           Distance    
@@ -1253,3 +1278,104 @@ summary(housing_dataset)
     ##  (Other)                   : 283   (Other):26978
 
 Since we don’t have any missing data, our data is ready for analysis!
+
+# 6 Analysis & Visualization
+
+``` r
+summary(housing_dataset)
+```
+
+    ##       Date                     Type           Price            Landsize     
+    ##  Min.   :2016-01-28   House      :22243   Min.   : 310000   Min.   :  82.0  
+    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 675000   1st Qu.: 302.0  
+    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 910000   Median : 552.0  
+    ##  Mean   :2017-06-07                       Mean   :1065101   Mean   : 558.1  
+    ##  3rd Qu.:2017-11-11                       3rd Qu.:1320000   3rd Qu.: 691.0  
+    ##  Max.   :2018-03-17                       Max.   :3400000   Max.   :3434.0  
+    ##                                                                             
+    ##      Rooms          Bathroom          Car           Distance    
+    ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.00  
+    ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 7.00  
+    ##  Median :3.000   Median :2.000   Median :2.000   Median :10.70  
+    ##  Mean   :3.083   Mean   :1.597   Mean   :1.695   Mean   :11.66  
+    ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:14.30  
+    ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :48.10  
+    ##                                                                 
+    ##                       Regionname   Propertycount  
+    ##  Southern Metropolitan     :9660   21650  :  788  
+    ##  Northern Metropolitan     :8232   8870   :  646  
+    ##  Western Metropolitan      :6106   10969  :  559  
+    ##  Eastern Metropolitan      :4107   14577  :  443  
+    ##  South-Eastern Metropolitan:1655   10412  :  425  
+    ##  Eastern Victoria          : 206   14949  :  410  
+    ##  (Other)                   : 283   (Other):26978
+
+First, let’s take a look at the data we have. The “Date” column tells us
+that this data covers sales from January 2016 to March 2018.
+
+When we look at the “Type” column, we can say that a large number of
+House sales were made. The number of Houses sold is almost 3 times the
+Townhouse and Unit/Duplex combined.
+
+When we look at the mean and median values in the “Price” column, we can
+say that the properties sold are worth approximately 1 million units,
+but spread to 310,000 to 3,400,000 units.
+
+The “Landsize” column says that on average 550-560 units of properties
+are sold, but there is still a large distribution.
+
+The “Rooms”, “Bathroom”, and “Car” columns give us information about the
+size and variety of houses in general.
+
+When we look at the “Distance” data, it shows that our data includes
+properties located directly in the center and at a location far fromthe
+center.
+
+The “Regionname” category indicates that while sales are mostly made in
+metropolitan areas, we do have areas with few properties, such as
+Eastern Victoria.
+
+Finally, when we look at the values in the “Propertycount” column, it
+shows that sales are made in many different property areas. We can use
+those information in further analysis.
+
+## 6.1 Property Type Distribution (Pie Chart)
+
+We can use the pie chart to show the difference in the “Type” column.
+First, let’s find the percentage values of House, Unit/Duplex and
+Townhouse one by one and define them into a variable.
+
+Then we will create a pieLabels to use in the colors and the data to be
+used, and the pieChartData variable to use it as data.
+
+Since ggplot does not support pie chart directly, we will solve this by
+using a different method at this point. Of course, we can use R’s own
+pie chart function, but since we will do other charts via ggplot, I
+chose to stick with this package. For this, we first create a ggplot
+object. We use the pieChartData we created for the data layer.
+
+For the Aesthetic layer, we leave x blank and assign pieSlices to y. We
+assign the pieLables we created to the “fill” parameter. This creates
+our main ggplot object. Then we create a bar object for the geometry
+layer.
+
+In order to make this barplot look like a pie chart, we will spread the
+bars we have around a point by 360 degrees by using coord_polar. Then we
+set the desired naming and colors and our pie chart is ready!
+
+``` r
+housePercentage <- nrow(housing_dataset[housing_dataset$Type == "House",]) / nrow(housing_dataset)
+udPercentage <- nrow(housing_dataset[housing_dataset$Type == "Unit/Duplex",]) / nrow(housing_dataset)
+townhousePercentage <- nrow(housing_dataset[housing_dataset$Type == "Townhouse",]) / nrow(housing_dataset)
+pieSlices <- c(housePercentage, udPercentage, townhousePercentage)
+pieLabels <- c("House", "Unit/Duplex", "Townhouse")
+pieChartData <- data.frame(pieLabels, pieSlices)
+ggplot(data=pieChartData, aes(x="", y=pieSlices, fill=pieLabels)) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start = 0) +
+  theme_void() +
+  labs(title = "Property Type Distribution") +
+  labs(fill="Types")
+```
+
+![](melbourne-housing_files/figure-gfm/unnamed-chunk-77-1.png)<!-- -->
