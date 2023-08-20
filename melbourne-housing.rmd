@@ -3,7 +3,7 @@ title: "Melbourne Housing"
 author: "Oguzhan Demir"
 date: "19/08/2023"
 output: 
-  pdf_document:
+  github_document:
     toc: true
     number_sections: true
 ---
