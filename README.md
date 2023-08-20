@@ -1256,19 +1256,19 @@ housing_dataset$YearBuilt <- NULL
 summary(housing_dataset)
 ```
 
-    ##       Date                     Type           Price            Landsize   
-    ##  Min.   :2016-01-28   House      :22243   Min.   : 310000   Min.   :  82  
-    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 668500   1st Qu.: 305  
-    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 905000   Median : 550  
-    ##  Mean   :2017-06-07                       Mean   :1063894   Mean   : 547  
-    ##  3rd Qu.:2017-11-11                       3rd Qu.:1320000   3rd Qu.: 686  
-    ##  Max.   :2018-03-17                       Max.   :3400000   Max.   :3434  
-    ##                                                                           
+    ##       Date                     Type           Price            Landsize     
+    ##  Min.   :2016-01-28   House      :22243   Min.   : 310000   Min.   :  82.0  
+    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 675000   1st Qu.: 302.0  
+    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 910000   Median : 552.0  
+    ##  Mean   :2017-06-07                       Mean   :1063180   Mean   : 544.3  
+    ##  3rd Qu.:2017-11-11                       3rd Qu.:1320000   3rd Qu.: 684.0  
+    ##  Max.   :2018-03-17                       Max.   :3400000   Max.   :3434.0  
+    ##                                                                             
     ##      Rooms          Bathroom          Car           Distance    
     ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.00  
     ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 7.00  
     ##  Median :3.000   Median :2.000   Median :2.000   Median :10.70  
-    ##  Mean   :3.083   Mean   :1.597   Mean   :1.688   Mean   :11.66  
+    ##  Mean   :3.083   Mean   :1.595   Mean   :1.694   Mean   :11.66  
     ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:14.30  
     ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :48.10  
     ##                                                                 
@@ -1289,19 +1289,19 @@ Since we don’t have any missing data, our data is ready for analysis!
 summary(housing_dataset)
 ```
 
-    ##       Date                     Type           Price            Landsize   
-    ##  Min.   :2016-01-28   House      :22243   Min.   : 310000   Min.   :  82  
-    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 668500   1st Qu.: 305  
-    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 905000   Median : 550  
-    ##  Mean   :2017-06-07                       Mean   :1063894   Mean   : 547  
-    ##  3rd Qu.:2017-11-11                       3rd Qu.:1320000   3rd Qu.: 686  
-    ##  Max.   :2018-03-17                       Max.   :3400000   Max.   :3434  
-    ##                                                                           
+    ##       Date                     Type           Price            Landsize     
+    ##  Min.   :2016-01-28   House      :22243   Min.   : 310000   Min.   :  82.0  
+    ##  1st Qu.:2016-12-03   Townhouse  : 3149   1st Qu.: 675000   1st Qu.: 302.0  
+    ##  Median :2017-07-29   Unit/Duplex: 4857   Median : 910000   Median : 552.0  
+    ##  Mean   :2017-06-07                       Mean   :1063180   Mean   : 544.3  
+    ##  3rd Qu.:2017-11-11                       3rd Qu.:1320000   3rd Qu.: 684.0  
+    ##  Max.   :2018-03-17                       Max.   :3400000   Max.   :3434.0  
+    ##                                                                             
     ##      Rooms          Bathroom          Car           Distance    
     ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.00  
     ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 7.00  
     ##  Median :3.000   Median :2.000   Median :2.000   Median :10.70  
-    ##  Mean   :3.083   Mean   :1.597   Mean   :1.688   Mean   :11.66  
+    ##  Mean   :3.083   Mean   :1.595   Mean   :1.694   Mean   :11.66  
     ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:14.30  
     ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :48.10  
     ##                                                                 
@@ -1541,7 +1541,7 @@ quantile(housing_dataset$Price, 0.25)
 ```
 
     ##    25% 
-    ## 668500
+    ## 675000
 
 ``` r
 quantile(housing_dataset$Price, 0.75)
@@ -1565,30 +1565,30 @@ Let us now examine the summaries of these groups separately.
 summary(lowpriced_properties)
 ```
 
-    ##       Date                     Type          Price           Landsize   
-    ##  Min.   :2016-02-04   House      :3829   Min.   :310000   Min.   :  82  
-    ##  1st Qu.:2017-03-11   Townhouse  : 810   1st Qu.:476000   1st Qu.: 301  
-    ##  Median :2017-08-26   Unit/Duplex:2921   Median :555000   Median : 550  
-    ##  Mean   :2017-07-01                      Mean   :539521   Mean   : 567  
-    ##  3rd Qu.:2017-11-18                      3rd Qu.:615000   3rd Qu.: 673  
-    ##  Max.   :2018-03-17                      Max.   :668400   Max.   :3434  
-    ##                                                                         
-    ##      Rooms          Bathroom          Car           Distance   
-    ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.0  
-    ##  1st Qu.:2.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 8.4  
-    ##  Median :3.000   Median :1.000   Median :1.000   Median :12.9  
-    ##  Mean   :2.592   Mean   :1.328   Mean   :1.497   Mean   :14.3  
-    ##  3rd Qu.:3.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:18.4  
-    ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :48.1  
-    ##                                                                
+    ##       Date                     Type          Price           Landsize     
+    ##  Min.   :2016-02-04   House      :3762   Min.   :310000   Min.   :  82.0  
+    ##  1st Qu.:2017-03-18   Townhouse  : 824   1st Qu.:473000   1st Qu.: 285.0  
+    ##  Median :2017-08-26   Unit/Duplex:2962   Median :555000   Median : 542.0  
+    ##  Mean   :2017-07-02                      Mean   :540735   Mean   : 555.3  
+    ##  3rd Qu.:2017-11-18                      3rd Qu.:620000   3rd Qu.: 678.0  
+    ##  Max.   :2018-03-17                      Max.   :674000   Max.   :3434.0  
+    ##                                                                           
+    ##      Rooms          Bathroom          Car           Distance    
+    ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.00  
+    ##  1st Qu.:2.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 8.40  
+    ##  Median :3.000   Median :1.000   Median :1.000   Median :12.90  
+    ##  Mean   :2.584   Mean   :1.328   Mean   :1.498   Mean   :14.33  
+    ##  3rd Qu.:3.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:18.40  
+    ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :48.10  
+    ##                                                                 
     ##                       Regionname   Propertycount 
-    ##  Northern Metropolitan     :2734   21650  : 351  
-    ##  Western Metropolitan      :2010   8870   : 225  
-    ##  Southern Metropolitan     :1413   15510  : 194  
-    ##  Eastern Metropolitan      : 564   13830  : 142  
-    ##  South-Eastern Metropolitan: 515   16166  : 128  
-    ##  Northern Victoria         : 129   14092  : 126  
-    ##  (Other)                   : 195   (Other):6394
+    ##  Northern Metropolitan     :2779   21650  : 356  
+    ##  Western Metropolitan      :2031   8870   : 230  
+    ##  Southern Metropolitan     :1348   15510  : 193  
+    ##  Eastern Metropolitan      : 558   13830  : 141  
+    ##  South-Eastern Metropolitan: 510   14092  : 131  
+    ##  Northern Victoria         : 133   16166  : 128  
+    ##  (Other)                   : 189   (Other):6369
 
 When we look at low-priced properties, we see that there are mostly
 House and Unit/Duplex properties. Almost all Unit/Duplex type properties
@@ -1602,30 +1602,30 @@ center and at the farthest point from the center.
 summary(midpriced_properties)
 ```
 
-    ##       Date                     Type           Price            Landsize     
-    ##  Min.   :2016-01-28   House      :11448   Min.   : 668500   Min.   :  82.0  
-    ##  1st Qu.:2016-12-03   Townhouse  : 1891   1st Qu.: 780000   1st Qu.: 288.0  
-    ##  Median :2017-07-29   Unit/Duplex: 1789   Median : 905000   Median : 535.0  
-    ##  Mean   :2017-06-07                       Mean   : 938406   Mean   : 527.9  
-    ##  3rd Qu.:2017-11-11                       3rd Qu.:1088000   3rd Qu.: 672.0  
-    ##  Max.   :2018-03-17                       Max.   :1320000   Max.   :3414.0  
-    ##                                                                             
-    ##      Rooms          Bathroom          Car           Distance    
-    ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.00  
-    ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 7.20  
-    ##  Median :3.000   Median :1.000   Median :2.000   Median :11.20  
-    ##  Mean   :3.075   Mean   :1.546   Mean   :1.691   Mean   :11.65  
-    ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:14.50  
-    ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :48.10  
-    ##                                                                 
+    ##       Date                     Type           Price            Landsize   
+    ##  Min.   :2016-01-28   House      :11521   Min.   : 675000   Min.   :  82  
+    ##  1st Qu.:2016-12-03   Townhouse  : 1892   1st Qu.: 786000   1st Qu.: 287  
+    ##  Median :2017-07-22   Unit/Duplex: 1753   Median : 910000   Median : 538  
+    ##  Mean   :2017-06-07                       Mean   : 944768   Mean   : 527  
+    ##  3rd Qu.:2017-11-11                       3rd Qu.:1100000   3rd Qu.: 670  
+    ##  Max.   :2018-03-17                       Max.   :1320000   Max.   :3414  
+    ##                                                                           
+    ##      Rooms         Bathroom          Car           Distance    
+    ##  Min.   :1.00   Min.   :1.000   Min.   :0.000   Min.   : 0.00  
+    ##  1st Qu.:3.00   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 7.00  
+    ##  Median :3.00   Median :1.000   Median :2.000   Median :11.20  
+    ##  Mean   :3.08   Mean   :1.546   Mean   :1.695   Mean   :11.59  
+    ##  3rd Qu.:4.00   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:14.50  
+    ##  Max.   :5.00   Max.   :4.000   Max.   :5.000   Max.   :48.10  
+    ##                                                                
     ##                       Regionname   Propertycount  
-    ##  Northern Metropolitan     :4331   21650  :  412  
-    ##  Southern Metropolitan     :3762   10969  :  405  
-    ##  Western Metropolitan      :3318   8870   :  349  
-    ##  Eastern Metropolitan      :2562   14577  :  320  
-    ##  South-Eastern Metropolitan: 998   11204  :  262  
-    ##  Eastern Victoria          :  99   11918  :  217  
-    ##  (Other)                   :  58   (Other):13163
+    ##  Northern Metropolitan     :4292   21650  :  414  
+    ##  Southern Metropolitan     :3905   10969  :  406  
+    ##  Western Metropolitan      :3268   8870   :  343  
+    ##  Eastern Metropolitan      :2531   14577  :  310  
+    ##  South-Eastern Metropolitan:1008   11204  :  255  
+    ##  Eastern Victoria          : 104   11918  :  220  
+    ##  (Other)                   :  58   (Other):13218
 
 When we look at mid-priced houses, we can see that more House type
 properties are in this scale. Although there is not a big difference in
@@ -1641,29 +1641,29 @@ summary(highpriced_properties)
 ```
 
     ##       Date                     Type          Price            Landsize     
-    ##  Min.   :2016-01-28   House      :6966   Min.   :1321000   Min.   :  83.0  
-    ##  1st Qu.:2016-11-19   Townhouse  : 448   1st Qu.:1480000   1st Qu.: 345.0  
-    ##  Median :2017-06-17   Unit/Duplex: 147   Median :1700000   Median : 585.0  
-    ##  Mean   :2017-05-13                      Mean   :1839273   Mean   : 565.1  
-    ##  3rd Qu.:2017-10-28                      3rd Qu.:2065000   3rd Qu.: 707.0  
+    ##  Min.   :2016-01-28   House      :6960   Min.   :1321000   Min.   :  83.0  
+    ##  1st Qu.:2016-11-19   Townhouse  : 433   1st Qu.:1470000   1st Qu.: 348.0  
+    ##  Median :2017-06-17   Unit/Duplex: 142   Median :1690000   Median : 590.0  
+    ##  Mean   :2017-05-13                      Mean   :1824860   Mean   : 568.2  
+    ##  3rd Qu.:2017-10-28                      3rd Qu.:2020000   3rd Qu.: 704.0  
     ##  Max.   :2018-03-17                      Max.   :3400000   Max.   :3381.0  
     ##                                                                            
-    ##      Rooms          Bathroom          Car          Distance     
-    ##  Min.   :1.000   Min.   :1.000   Min.   :0.00   Min.   : 0.000  
-    ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.00   1st Qu.: 5.900  
-    ##  Median :4.000   Median :2.000   Median :2.00   Median : 8.700  
-    ##  Mean   :3.589   Mean   :1.969   Mean   :1.87   Mean   : 9.066  
-    ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:2.00   3rd Qu.:11.400  
-    ##  Max.   :5.000   Max.   :4.000   Max.   :5.00   Max.   :39.000  
-    ##                                                                 
+    ##      Rooms          Bathroom          Car           Distance     
+    ##  Min.   :1.000   Min.   :1.000   Min.   :0.000   Min.   : 0.000  
+    ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 5.900  
+    ##  Median :4.000   Median :2.000   Median :2.000   Median : 8.700  
+    ##  Mean   :3.589   Mean   :1.961   Mean   :1.888   Mean   : 9.141  
+    ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:11.400  
+    ##  Max.   :5.000   Max.   :4.000   Max.   :5.000   Max.   :38.000  
+    ##                                                                  
     ##                       Regionname   Propertycount 
-    ##  Southern Metropolitan     :4485   7809   : 271  
-    ##  Northern Metropolitan     :1167   10412  : 245  
-    ##  Eastern Metropolitan      : 981   10331  : 241  
-    ##  Western Metropolitan      : 778   6938   : 233  
-    ##  South-Eastern Metropolitan: 142   10579  : 226  
-    ##  Eastern Victoria          :   5   8920   : 218  
-    ##  (Other)                   :   3   (Other):6127
+    ##  Southern Metropolitan     :4407   7809   : 266  
+    ##  Northern Metropolitan     :1161   8920   : 245  
+    ##  Eastern Metropolitan      :1018   10331  : 237  
+    ##  Western Metropolitan      : 807   6938   : 231  
+    ##  South-Eastern Metropolitan: 137   10579  : 226  
+    ##  Eastern Victoria          :   3   10412  : 224  
+    ##  (Other)                   :   2   (Other):6106
 
 When we look at the high-priced properties, we can say that almost all
 of them are House-type houses. When we check the distance value, it is
@@ -1708,8 +1708,15 @@ round(cor(housing_dataset[, c("Price", "Landsize", "Rooms", "Bathroom", "Car", "
 ```
 
     ##    Price Landsize    Rooms Bathroom      Car Distance 
-    ##     1.00     0.03     0.44     0.41     0.16    -0.27
+    ##     1.00     0.04     0.44     0.40     0.16    -0.27
 
-As we can see from the table above, Rooms, Bathroom and Distance
-variables are the 3 numerical variables that affect the Price value the
-most.
+As we can see from the table above, most of the numerical values in our
+table affects the Price significantly.
+
+And with this, we’ve completed our analysis on Melbourne Housing
+dataset. There might some updates in future to improve our approaches,
+add more detailed analysis and so on. This project was made with the aim
+of bringing together hands-on experiences. Although less effective
+methods were used in order to avoid the project’s purpose at some
+points, the project achieved its purpose. I hope this hands-on analysis
+report has helped you learn something about R, too.
