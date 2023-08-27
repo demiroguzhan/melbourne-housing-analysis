@@ -790,10 +790,10 @@ After the desired naming and coloring, we see a table like this:
 ```{r}
 ggplot(data = housing_dataset, aes(x = Price)) +
   geom_histogram(color = "black", bins = 25, fill = "beige") +
-  geom_vline(xintercept = round(mean(housing_dataset$Price)), color = "cyan3", size = 1) +
-  geom_vline(xintercept = round(median(housing_dataset$Price)), color = "purple", size = 1) +
-  geom_vline(xintercept = round(mean(housing_dataset$Price) + sd(housing_dataset$Price)), color = "darkseagreen4", size = 1) +
-  geom_vline(xintercept = round(mean(housing_dataset$Price) - sd(housing_dataset$Price)), color = "darkseagreen4", size = 1) +
+  geom_vline(xintercept = round(mean(housing_dataset$Price)), color = "cyan3", linewidth = 1) +
+  geom_vline(xintercept = round(median(housing_dataset$Price)), color = "purple", linewidth = 1) +
+  geom_vline(xintercept = round(mean(housing_dataset$Price) + sd(housing_dataset$Price)), color = "darkseagreen4", linewidth = 1) +
+  geom_vline(xintercept = round(mean(housing_dataset$Price) - sd(housing_dataset$Price)), color = "darkseagreen4", linewidth = 1) +
   annotate(geom = "label", x = round(mean(housing_dataset$Price)), y = 4800, label = paste("ST-Dev: ±", round(sd(housing_dataset$Price))), fill = "darkseagreen4", size = 3.5) +
   annotate(geom = "label", x = round(mean(housing_dataset$Price)) + 360000, y = 3800, label = paste("Mean:", round(mean(housing_dataset$Price))), fill = "cyan3", size = 3.5) +
   annotate(geom = "label", x = round(median(housing_dataset$Price)) + 370000, y = 4300, label = paste("Median:", round(median(housing_dataset$Price))), fill = "purple", size = 3.5) +
